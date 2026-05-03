@@ -1,1 +1,6 @@
 @import 'tailwindcss';
+
+.error-icon-red {
+  filter: brightness(0) saturate(100%) invert(38%) sepia(91%)
+    saturate(2069%) hue-rotate(332deg) brightness(104%) contrast(106%);
+}

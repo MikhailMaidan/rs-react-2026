@@ -1,4 +1,4 @@
-import { Component, type CSSProperties } from 'react';
+import { Component } from 'react';
 import { ErrorButton } from '../ErrorButton/ErrorButton';
 
 interface ErrorMessageProps {
@@ -13,11 +13,6 @@ const magnifierIcon = '/magnifier-svgrepo-com.svg';
 const updateIcon = '/update-svgrepo-com.svg';
 const wifiIcon = '/wifi-slash-svgrepo-com.svg';
 
-const getIconMask = (icon: string): CSSProperties => ({
-  WebkitMask: `url(${icon}) center / contain no-repeat`,
-  mask: `url(${icon}) center / contain no-repeat`,
-});
-
 export class ErrorMessage extends Component<ErrorMessageProps> {
   render() {
     const {
@@ -28,17 +23,13 @@ export class ErrorMessage extends Component<ErrorMessageProps> {
     } = this.props;
 
     return (
-      <div className="relative overflow-hidden rounded-[10px] border border-red-500 bg-black px-6 py-10 text-center shadow-[0_0_28px_rgba(239,68,68,0.12)] sm:px-10">
-        <img
-          src="/error-component.png"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-45"
-        />
+      <div className="relative overflow-hidden rounded-[10px] border border-red-500 bg-black bg-[url('/error-component.png')] bg-cover bg-center px-6 py-14 text-center shadow-[0_0_28px_rgba(239,68,68,0.12)] sm:px-10">
+        <div className="absolute inset-0 bg-black/30" />
         <div className="relative z-10 mx-auto max-w-[860px]">
-          <span
-            aria-hidden="true"
-            className="mx-auto block h-16 w-16 bg-current text-red-500"
-            style={getIconMask(attentionIcon)}
+          <img
+            src={attentionIcon}
+            alt=""
+            className="error-icon-red mx-auto block h-16 w-16"
           />
           <h2 className="mt-5 text-[28px] font-bold text-white">{title}</h2>
           <p className="mx-auto mt-4 max-w-[720px] text-[18px] leading-snug text-red-400">
@@ -53,26 +44,26 @@ export class ErrorMessage extends Component<ErrorMessageProps> {
             </p>
             <ul className="mt-5 space-y-4 text-[16px] text-zinc-100">
               <li className="flex items-center gap-4">
-                <span
-                  aria-hidden="true"
-                  className="h-6 w-6 shrink-0 bg-current text-red-500"
-                  style={getIconMask(updateIcon)}
+                <img
+                  src={updateIcon}
+                  alt=""
+                  className="error-icon-red h-6 w-6 shrink-0"
                 />
                 Click &quot;Try Again&quot; to reload the results
               </li>
               <li className="flex items-center gap-4">
-                <span
-                  aria-hidden="true"
-                  className="h-6 w-6 shrink-0 bg-current text-red-500"
-                  style={getIconMask(magnifierIcon)}
+                <img
+                  src={magnifierIcon}
+                  alt=""
+                  className="error-icon-red h-6 w-6 shrink-0"
                 />
                 Try different search terms
               </li>
               <li className="flex items-center gap-4">
-                <span
-                  aria-hidden="true"
-                  className="h-6 w-6 shrink-0 bg-current text-red-500"
-                  style={getIconMask(wifiIcon)}
+                <img
+                  src={wifiIcon}
+                  alt=""
+                  className="error-icon-red h-6 w-6 shrink-0"
                 />
                 Check your internet connection
               </li>
@@ -85,10 +76,10 @@ export class ErrorMessage extends Component<ErrorMessageProps> {
               className="mx-auto mt-6 flex h-14 w-full max-w-[280px] items-center justify-center gap-3 rounded-lg border border-red-500 bg-zinc-950/80 text-[20px] font-bold text-white transition hover:bg-red-500/10"
               onClick={onRetry}
             >
-              <span
-                aria-hidden="true"
-                className="h-6 w-6 bg-current text-red-500"
-                style={getIconMask(updateIcon)}
+              <img
+                src={updateIcon}
+                alt=""
+                className="error-icon-red h-6 w-6"
               />
               Try Again
             </button>
