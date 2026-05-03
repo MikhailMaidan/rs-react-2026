@@ -1,6 +1,44 @@
-import { Component } from 'react';
+import {
+  Component,
+  type CSSProperties,
+  type ChangeEvent,
+  type FormEvent,
+} from 'react';
+import { SEARCH_TERM_STORAGE_KEY } from '../../constants/localStorage';
+import { normalizeSearchTerm } from '../../utils/normalizeSearchTerm';
 
-export class Search extends Component {
+const magnifierIcon = '/magnifier-svgrepo-com.svg';
+
+const getIconMask = (icon: string): CSSProperties => ({
+  WebkitMask: `url(${icon}) center / contain no-repeat`,
+  mask: `url(${icon}) center / contain no-repeat`,
+});
+
+interface SearchProps {
+  onSearch: (searchTerm: string) => void;
+}
+
+interface SearchState {
+  searchTerm: string;
+}
+
+export class Search extends Component<SearchProps, SearchState> {
+  state: SearchState = {
+    searchTerm: localStorage.getItem(SEARCH_TERM_STORAGE_KEY) ?? '',
+  };
+
+  handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    this.setState({ searchTerm: event.target.value });
+  };
+
+  handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const searchTerm = normalizeSearchTerm(this.state.searchTerm);
+    this.setState({ searchTerm });
+    this.props.onSearch(searchTerm);
+  };
+
   render() {
     return (
       <section className="mx-auto max-w-[1800px] px-6 sm:px-9">
@@ -9,19 +47,11 @@ export class Search extends Component {
             <div className="flex items-start justify-between gap-6">
               <div>
                 <div className="flex items-center gap-4">
-                  <svg
+                  <span
                     aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    className="h-10 w-10 text-yellow-400"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2.4"
-                  >
-                    <circle cx="11" cy="11" r="7" />
-                    <path d="m20 20-4.2-4.2" />
-                  </svg>
+                    className="h-10 w-10 bg-current text-yellow-400"
+                    style={getIconMask(magnifierIcon)}
+                  />
                   <h1 className="text-[30px] font-bold leading-none text-white">
                     Search
                   </h1>
@@ -31,52 +61,25 @@ export class Search extends Component {
                   Enter a term to search for items. Your last search is saved.
                 </p>
               </div>
-
-              <button
-                type="button"
-                className="flex h-11 shrink-0 items-center gap-3 rounded-md border border-zinc-800 bg-zinc-950/80 px-5 text-sm font-semibold text-white"
-              >
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 24 24"
-                  className="h-5 w-5 text-yellow-400"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2.2"
-                >
-                  <path d="M10.3 4.2 2.8 17.3A2 2 0 0 0 4.5 20h15a2 2 0 0 0 1.7-2.7L13.7 4.2a2 2 0 0 0-3.4 0Z" />
-                  <path d="M12 9v4" />
-                  <path d="M12 17h.01" />
-                </svg>
-                Test Error
-              </button>
             </div>
 
-            <form className="mt-6 flex gap-5">
+            <form className="mt-6 flex gap-5" onSubmit={this.handleSubmit}>
               <input
                 type="search"
                 placeholder="Search items..."
+                value={this.state.searchTerm}
                 className="h-[54px] min-w-0 flex-1 rounded-md border border-zinc-700 bg-zinc-900/80 px-5 text-base text-white outline-none transition placeholder:text-zinc-400 focus:border-yellow-400"
+                onChange={this.handleChange}
               />
               <button
                 type="submit"
                 className="flex h-[54px] w-[194px] shrink-0 items-center justify-center gap-3 rounded-md bg-yellow-400 font-bold text-black shadow-[0_0_24px_rgba(250,204,21,0.32)] transition hover:bg-yellow-300"
               >
-                <svg
+                <span
                   aria-hidden="true"
-                  viewBox="0 0 24 24"
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2.4"
-                >
-                  <circle cx="11" cy="11" r="6" />
-                  <path d="m20 20-4.2-4.2" />
-                </svg>
+                  className="h-5 w-5 bg-current text-black"
+                  style={getIconMask(magnifierIcon)}
+                />
                 Search
               </button>
             </form>
