@@ -1,10 +1,16 @@
-export default function App() {
-  return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
-      <section className="mx-auto max-w-6xl px-6 py-10">
-        <h1 className="text-3xl font-bold"></h1>
-        <p className="mt-4 text-slate-400"></p>
-      </section>
-    </main>
-  );
+import { Component } from 'react';
+import { Header } from './components/Header/Header';
+import { Search } from './components/Search/Search';
+
+export default class App extends Component {
+  render() {
+    return (
+      <main className="min-h-screen bg-black text-slate-100">
+        <Header />
+        <div className="mt-5">
+          <Search />
+        </div>
+      </main>
+    );
+  }
 }
