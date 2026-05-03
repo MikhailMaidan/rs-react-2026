@@ -32,9 +32,8 @@ export default class App extends Component<object, AppState> {
     }
 
     localStorage.setItem(SEARCH_TERM_STORAGE_KEY, searchTerm);
-    this.setState({ searchTerm }, () => {
-      this.loadCharacters(searchTerm);
-    });
+    this.setState({ searchTerm });
+    this.loadCharacters(searchTerm);
   };
 
   handleRetry = () => {

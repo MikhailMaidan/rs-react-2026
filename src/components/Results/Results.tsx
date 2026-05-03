@@ -1,4 +1,4 @@
-import { Component, type CSSProperties } from 'react';
+import { Component } from 'react';
 import { CardList } from '../CardList/CardList';
 import { ErrorButton } from '../ErrorButton/ErrorButton';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
@@ -14,11 +14,6 @@ interface ResultsProps {
 }
 
 const menuIcon = '/menu-svgrepo-com.svg';
-
-const getIconMask = (icon: string): CSSProperties => ({
-  WebkitMask: `url(${icon}) center / contain no-repeat`,
-  mask: `url(${icon}) center / contain no-repeat`,
-});
 
 export class Results extends Component<ResultsProps> {
   getSubtitle() {
@@ -43,17 +38,17 @@ export class Results extends Component<ResultsProps> {
             <>
               <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <div className="flex items-center gap-5">
-                    <span
-                      aria-hidden="true"
-                      className="h-12 w-12 bg-current text-yellow-400"
-                      style={getIconMask(menuIcon)}
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={menuIcon}
+                      alt=""
+                      className="icon-gold h-10 w-10"
                     />
-                    <h2 className="text-[42px] font-bold leading-none text-white">
+                    <h2 className="text-[30px] font-bold leading-none text-white">
                       Results
                     </h2>
                   </div>
-                  <p className="mt-6 text-[24px] text-zinc-400">
+                  <p className="mt-5 text-sm text-zinc-300">
                     {this.getSubtitle()}
                   </p>
                 </div>

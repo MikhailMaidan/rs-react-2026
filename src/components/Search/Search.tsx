@@ -1,18 +1,7 @@
-import {
-  Component,
-  type CSSProperties,
-  type ChangeEvent,
-  type FormEvent,
-} from 'react';
+import { Component, type ChangeEvent, type FormEvent } from 'react';
 import { SEARCH_TERM_STORAGE_KEY } from '../../constants/localStorage';
-import { normalizeSearchTerm } from '../../utils/normalizeSearchTerm';
 
 const magnifierIcon = '/magnifier-svgrepo-com.svg';
-
-const getIconMask = (icon: string): CSSProperties => ({
-  WebkitMask: `url(${icon}) center / contain no-repeat`,
-  mask: `url(${icon}) center / contain no-repeat`,
-});
 
 interface SearchProps {
   onSearch: (searchTerm: string) => void;
@@ -34,7 +23,7 @@ export class Search extends Component<SearchProps, SearchState> {
   handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const searchTerm = normalizeSearchTerm(this.state.searchTerm);
+    const searchTerm = this.state.searchTerm.trim();
     this.setState({ searchTerm });
     this.props.onSearch(searchTerm);
   };
@@ -47,10 +36,10 @@ export class Search extends Component<SearchProps, SearchState> {
             <div className="flex items-start justify-between gap-6">
               <div>
                 <div className="flex items-center gap-4">
-                  <span
-                    aria-hidden="true"
-                    className="h-10 w-10 bg-current text-yellow-400"
-                    style={getIconMask(magnifierIcon)}
+                  <img
+                    src={magnifierIcon}
+                    alt=""
+                    className="icon-gold h-10 w-10"
                   />
                   <h1 className="text-[30px] font-bold leading-none text-white">
                     Search
@@ -75,10 +64,10 @@ export class Search extends Component<SearchProps, SearchState> {
                 type="submit"
                 className="flex h-[54px] w-[194px] shrink-0 items-center justify-center gap-3 rounded-md bg-yellow-400 font-bold text-black shadow-[0_0_24px_rgba(250,204,21,0.32)] transition hover:bg-yellow-300"
               >
-                <span
-                  aria-hidden="true"
-                  className="h-5 w-5 bg-current text-black"
-                  style={getIconMask(magnifierIcon)}
+                <img
+                  src={magnifierIcon}
+                  alt=""
+                  className="icon-black h-5 w-5"
                 />
                 Search
               </button>

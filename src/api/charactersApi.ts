@@ -5,10 +5,10 @@ import type { CharacterResult } from '../types/character';
 export const fetchCharacters = async (
   searchTerm: string
 ): Promise<CharacterResult[]> => {
-  let url = ENDPOINTS.people;
+  let url = `${ENDPOINTS.people}?page=1`;
 
   if (searchTerm) {
-    url += `?search=${encodeURIComponent(searchTerm)}`;
+    url += `&search=${encodeURIComponent(searchTerm)}`;
   }
 
   const response = await fetch(url);
