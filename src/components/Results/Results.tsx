@@ -61,7 +61,7 @@ export class Results extends Component<ResultsProps> {
 
     return (
       <section className="mx-auto max-w-[1800px] px-6 pb-10 sm:px-9">
-        <div className="relative rounded-[14px] border border-zinc-800 bg-black/85 p-6 shadow-[0_0_30px_rgba(255,255,255,0.03)] sm:p-8">
+        <div className="relative rounded-[14px] border border-yellow-400 bg-black/85 p-6 shadow-[0_0_30px_rgba(250,204,21,0.08)] sm:p-8">
           {isLoading && <Loader />}
 
           {errorMessage ? (
@@ -85,7 +85,7 @@ export class Results extends Component<ResultsProps> {
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-zinc-800 bg-zinc-950/80 px-5 py-3 text-[24px] font-bold text-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.08)]">
+                <div className="rounded-lg border border-yellow-400 bg-zinc-950/80 px-5 py-3 text-[24px] font-bold text-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.08)]">
                   Total: {totalItems} items
                 </div>
               </div>

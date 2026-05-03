@@ -33,8 +33,8 @@ export class Search extends Component<SearchProps, SearchState> {
   render() {
     return (
       <section className="mx-auto max-w-[1800px] px-6 sm:px-9">
-        <div className="rounded-[10px] border border-zinc-800 bg-black/85 p-5">
-          <div className="rounded-[8px] border border-zinc-800 bg-zinc-950/70 px-6 py-6">
+        <div className="rounded-[10px] border border-yellow-400 bg-black/85 p-5 shadow-[0_0_24px_rgba(250,204,21,0.08)]">
+          <div className="rounded-[8px] border border-yellow-400/60 bg-zinc-950/70 px-6 py-6">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-4">
