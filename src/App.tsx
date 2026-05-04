@@ -37,7 +37,7 @@ export default class App extends Component<object, AppState> {
   }
 
   handleSearch = (searchTerm: string) => {
-    if (searchTerm === this.state.searchTerm && this.state.currentPage === 1) {
+    if (searchTerm === this.state.searchTerm) {
       return;
     }
 

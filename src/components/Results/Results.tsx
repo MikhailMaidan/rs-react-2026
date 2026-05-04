@@ -3,6 +3,7 @@ import { CardList } from '../CardList/CardList';
 import { ErrorButton } from '../ErrorButton/ErrorButton';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { Loader } from '../Loader/Loader';
+import { ITEMS_PER_PAGE } from '../../api/charactersApi';
 import type { CharacterResult } from '../../types/character';
 
 interface ResultsProps {
@@ -22,7 +23,6 @@ interface ResultsProps {
 }
 
 const menuIcon = '/menu-svgrepo-com.svg';
-const itemsPerPage = 10;
 const maxPageButtons = 9;
 
 export class Results extends Component<ResultsProps> {
@@ -51,7 +51,7 @@ export class Results extends Component<ResultsProps> {
     } = this.props;
     const totalPages = Math.min(
       maxPageButtons,
-      Math.ceil(totalItems / itemsPerPage)
+      Math.ceil(totalItems / ITEMS_PER_PAGE)
     );
     const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
 

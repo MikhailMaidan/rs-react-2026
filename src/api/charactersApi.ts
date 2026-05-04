@@ -1,4 +1,4 @@
-import { ENDPOINTS } from './endpoints';
+import { buildPeopleUrl } from './endpoints';
 import type { CharactersResponse } from '../types/api';
 import type { CharacterResult } from '../types/character';
 
@@ -9,13 +9,22 @@ export interface CharactersData {
   hasPreviousPage: boolean;
 }
 
-const itemsPerPage = 10;
+export const ITEMS_PER_PAGE = 10;
+const loadingDelay = 500;
+
+const wait = (delay: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, delay);
+  });
 
 export const fetchCharacters = async (
   searchTerm: string,
   page: number
 ): Promise<CharactersData> => {
-  const response = await fetch(ENDPOINTS.people);
+  const requestUrl = buildPeopleUrl(searchTerm, page, ITEMS_PER_PAGE);
+  await wait(loadingDelay);
+
+  const response = await fetch(requestUrl);
 
   if (!response.ok) {
     throw new Error('Unable to load results. Please try again.');
@@ -28,10 +37,10 @@ export const fetchCharacters = async (
         character.name.toLowerCase().includes(normalizedSearchTerm)
       )
     : data;
-  const startIndex = (page - 1) * itemsPerPage;
+  const startIndex = (page - 1) * ITEMS_PER_PAGE;
   const pageItems = filteredCharacters.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + ITEMS_PER_PAGE
   );
 
   return {
@@ -41,7 +50,7 @@ export const fetchCharacters = async (
       description: `${character.gender}, born ${character.birth_year}, height ${character.height} cm, mass ${character.mass} kg.`,
     })),
     totalItems: filteredCharacters.length,
-    hasNextPage: page * itemsPerPage < filteredCharacters.length,
+    hasNextPage: page * ITEMS_PER_PAGE < filteredCharacters.length,
     hasPreviousPage: page > 1,
   };
 };
