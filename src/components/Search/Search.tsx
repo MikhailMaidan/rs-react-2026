@@ -1,8 +1,9 @@
 import { Component, type ChangeEvent, type FormEvent } from 'react';
 import { SEARCH_TERM_STORAGE_KEY } from '../../constants/localStorage';
 import { ErrorButton } from '../ErrorButton/ErrorButton';
+import { getAssetUrl } from '../../utils/assets';
 
-const magnifierIcon = '/magnifier-svgrepo-com.svg';
+const magnifierIcon = getAssetUrl('magnifier-svgrepo-com.svg');
 
 interface SearchProps {
   onSearch: (searchTerm: string) => void;

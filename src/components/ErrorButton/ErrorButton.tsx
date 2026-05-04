@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { getAssetUrl } from '../../utils/assets';
 
 interface ErrorButtonProps {
   onTriggerError?: () => void;
@@ -8,7 +9,7 @@ interface ErrorButtonState {
   hasError: boolean;
 }
 
-const attentionIcon = '/attention-svgrepo-com.svg';
+const attentionIcon = getAssetUrl('attention-svgrepo-com.svg');
 
 export class ErrorButton extends Component<ErrorButtonProps, ErrorButtonState> {
   state: ErrorButtonState = {

@@ -4,6 +4,7 @@ import { ErrorButton } from '../ErrorButton/ErrorButton';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { Loader } from '../Loader/Loader';
 import { ITEMS_PER_PAGE } from '../../api/charactersApi';
+import { getAssetUrl } from '../../utils/assets';
 import type { CharacterResult } from '../../types/character';
 
 interface ResultsProps {
@@ -22,7 +23,7 @@ interface ResultsProps {
   onPreviousPage: () => void;
 }
 
-const menuIcon = '/menu-svgrepo-com.svg';
+const menuIcon = getAssetUrl('menu-svgrepo-com.svg');
 const maxPageButtons = 9;
 
 export class Results extends Component<ResultsProps> {

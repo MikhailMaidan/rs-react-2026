@@ -5,6 +5,7 @@ import { Results } from './components/Results/Results';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import { fetchCharacters } from './api/charactersApi';
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
+import { getAssetUrl } from './utils/assets';
 import type { CharacterResult } from './types/character';
 
 interface AppState {
@@ -118,11 +119,15 @@ export default class App extends Component<object, AppState> {
       errorMessage,
       shouldThrowResultsError,
     } = this.state;
+    const backgroundImage = `url("${getAssetUrl('background-image.png')}")`;
 
     return (
       <main className="min-h-screen bg-black text-slate-100">
         <Header />
-        <div className="min-h-[calc(100vh-96px)] space-y-5 bg-[url('/background-image.png')] bg-cover bg-center bg-fixed py-5">
+        <div
+          className="min-h-[calc(100vh-96px)] space-y-5 bg-cover bg-center bg-fixed py-5"
+          style={{ backgroundImage }}
+        >
           <Search
             onSearch={this.handleSearch}
             onErrorButtonClick={this.handleErrorButtonClick}

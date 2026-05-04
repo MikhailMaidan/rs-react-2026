@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { ErrorButton } from '../ErrorButton/ErrorButton';
+import { getAssetUrl } from '../../utils/assets';
 
 interface ErrorMessageProps {
   title?: string;
@@ -8,10 +9,11 @@ interface ErrorMessageProps {
   showErrorButton?: boolean;
 }
 
-const attentionIcon = '/attention-svgrepo-com.svg';
-const magnifierIcon = '/magnifier-svgrepo-com.svg';
-const updateIcon = '/update-svgrepo-com.svg';
-const wifiIcon = '/wifi-slash-svgrepo-com.svg';
+const attentionIcon = getAssetUrl('attention-svgrepo-com.svg');
+const errorBackground = getAssetUrl('error-component.png');
+const magnifierIcon = getAssetUrl('magnifier-svgrepo-com.svg');
+const updateIcon = getAssetUrl('update-svgrepo-com.svg');
+const wifiIcon = getAssetUrl('wifi-slash-svgrepo-com.svg');
 
 export class ErrorMessage extends Component<ErrorMessageProps> {
   render() {
@@ -21,9 +23,13 @@ export class ErrorMessage extends Component<ErrorMessageProps> {
       onRetry,
       showErrorButton = true,
     } = this.props;
+    const backgroundImage = `url("${errorBackground}")`;
 
     return (
-      <div className="relative overflow-hidden rounded-[10px] border border-red-500 bg-black bg-[url('/error-component.png')] bg-cover bg-center px-6 py-14 text-center shadow-[0_0_28px_rgba(239,68,68,0.12)] sm:px-10">
+      <div
+        className="relative overflow-hidden rounded-[10px] border border-red-500 bg-black bg-cover bg-center px-6 py-14 text-center shadow-[0_0_28px_rgba(239,68,68,0.12)] sm:px-10"
+        style={{ backgroundImage }}
+      >
         <div className="absolute inset-0 bg-black/30" />
         <div className="relative z-10 mx-auto max-w-[860px]">
           <img
