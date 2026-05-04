@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 
 .icon-gold {
-  filter: brightness(0) saturate(100%) invert(77%) sepia(92%)
-    saturate(1068%) hue-rotate(356deg) brightness(101%) contrast(104%);
+  filter: brightness(0) saturate(100%) invert(77%) sepia(92%) saturate(1068%)
+    hue-rotate(356deg) brightness(101%) contrast(104%);
 }
 
 .icon-black {
@@ -10,6 +10,6 @@
 }
 
 .error-icon-red {
-  filter: brightness(0) saturate(100%) invert(38%) sepia(91%)
-    saturate(2069%) hue-rotate(332deg) brightness(104%) contrast(106%);
+  filter: brightness(0) saturate(100%) invert(38%) sepia(91%) saturate(2069%)
+    hue-rotate(332deg) brightness(104%) contrast(106%);
 }
