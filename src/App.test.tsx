@@ -73,4 +73,40 @@ describe('App', () => {
       screen.getByText('Unable to load results. Please try again.')
     ).toBeInTheDocument();
   });
+
+  it('shows loader while characters are loading', async () => {
+    let finishLoading: (value: typeof emptyResult) => void = () => {};
+    const loadingPromise = new Promise<typeof emptyResult>((resolve) => {
+      finishLoading = resolve;
+    });
+
+    fetchCharactersMock.mockReturnValue(loadingPromise);
+
+    render(<App />);
+
+    expect(
+      screen.getByRole('status', { name: /loading results/i })
+    ).toBeInTheDocument();
+
+    finishLoading(emptyResult);
+    await screen.findByText('No results found');
+  });
+
+  it('tries to load characters again after error', async () => {
+    const user = userEvent.setup();
+
+    fetchCharactersMock
+      .mockRejectedValueOnce(
+        new Error('Unable to load results. Please try again.')
+      )
+      .mockResolvedValueOnce(lukeResult);
+
+    render(<App />);
+
+    await screen.findByRole('heading', { name: /unable to load results/i });
+    await user.click(screen.getByRole('button', { name: /try again/i }));
+
+    expect(fetchCharactersMock).toHaveBeenCalledTimes(2);
+    expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+  });
 });

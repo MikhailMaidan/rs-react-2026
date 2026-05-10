@@ -105,4 +105,91 @@ describe('Results', () => {
 
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
+
+  it('calls pagination buttons', async () => {
+    const user = userEvent.setup();
+    const onNextPage = vi.fn();
+    const onPreviousPage = vi.fn();
+
+    render(
+      <Results
+        items={mockCharacterResults}
+        searchTerm="sky"
+        currentPage={2}
+        totalItems={30}
+        hasNextPage
+        hasPreviousPage
+        isLoading={false}
+        errorMessage=""
+        shouldThrowError={false}
+        onRetry={vi.fn()}
+        onPageChange={vi.fn()}
+        onNextPage={onNextPage}
+        onPreviousPage={onPreviousPage}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: /previous/i }));
+    await user.click(screen.getByRole('button', { name: /next/i }));
+
+    expect(onPreviousPage).toHaveBeenCalledTimes(1);
+    expect(onNextPage).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls page number button', async () => {
+    const user = userEvent.setup();
+    const onPageChange = vi.fn();
+
+    render(
+      <Results
+        items={mockCharacterResults}
+        searchTerm="sky"
+        currentPage={1}
+        totalItems={30}
+        hasNextPage
+        hasPreviousPage={false}
+        isLoading={false}
+        errorMessage=""
+        shouldThrowError={false}
+        onRetry={vi.fn()}
+        onPageChange={onPageChange}
+        onNextPage={vi.fn()}
+        onPreviousPage={vi.fn()}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: '2' }));
+
+    expect(onPageChange).toHaveBeenCalledWith(2);
+  });
+
+  it('does not call disabled pagination buttons', async () => {
+    const user = userEvent.setup();
+    const onNextPage = vi.fn();
+    const onPreviousPage = vi.fn();
+
+    render(
+      <Results
+        items={mockCharacterResults}
+        searchTerm="sky"
+        currentPage={1}
+        totalItems={10}
+        hasNextPage={false}
+        hasPreviousPage={false}
+        isLoading={false}
+        errorMessage=""
+        shouldThrowError={false}
+        onRetry={vi.fn()}
+        onPageChange={vi.fn()}
+        onNextPage={onNextPage}
+        onPreviousPage={onPreviousPage}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: /previous/i }));
+    await user.click(screen.getByRole('button', { name: /next/i }));
+
+    expect(onPreviousPage).not.toHaveBeenCalled();
+    expect(onNextPage).not.toHaveBeenCalled();
+  });
 });

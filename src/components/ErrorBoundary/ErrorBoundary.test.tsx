@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ErrorButton } from '../ErrorButton/ErrorButton';
 import { ErrorBoundary } from './ErrorBoundary';
 
 function ThrowingChild() {
@@ -33,5 +34,21 @@ describe('ErrorBoundary', () => {
     await user.click(screen.getByRole('button', { name: /try again/i }));
 
     expect(onReset).toHaveBeenCalledTimes(1);
+    expect(console.error).toHaveBeenCalled();
+  });
+
+  it('shows fallback UI after error button click', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ErrorBoundary>
+        <ErrorButton />
+      </ErrorBoundary>
+    );
+
+    await user.click(screen.getByRole('button', { name: /error button/i }));
+
+    expect(screen.getByText(/unable to render results/i)).toBeInTheDocument();
+    expect(console.error).toHaveBeenCalled();
   });
 });
