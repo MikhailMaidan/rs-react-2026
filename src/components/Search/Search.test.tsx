@@ -9,6 +9,12 @@ describe('Search', () => {
     localStorage.clear();
   });
 
+  it('shows empty input when localStorage is empty', () => {
+    render(<Search onSearch={vi.fn()} onErrorButtonClick={vi.fn()} />);
+
+    expect(screen.getByRole('searchbox')).toHaveValue('');
+  });
+
   it('shows a previously saved search term from localStorage', () => {
     localStorage.setItem(SEARCH_TERM_STORAGE_KEY, 'vader');
 
