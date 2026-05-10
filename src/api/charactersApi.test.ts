@@ -52,4 +52,15 @@ describe('fetchCharacters', () => {
 
     await request;
   });
+
+  it('rejects with the same message for 404 response', async () => {
+    fetchMock.mockResolvedValue(new Response(null, { status: 404 }));
+
+    const request = expect(fetchCharacters('unknown', 1)).rejects.toThrow(
+      'Unable to load results. Please try again.'
+    );
+    await vi.advanceTimersByTimeAsync(500);
+
+    await request;
+  });
 });

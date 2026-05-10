@@ -25,6 +25,20 @@ const lukeResult = {
   hasPreviousPage: false,
 };
 
+const firstPageResult = {
+  items: [mockCharacterResults[0]],
+  totalItems: 20,
+  hasNextPage: true,
+  hasPreviousPage: false,
+};
+
+const secondPageResult = {
+  items: [mockCharacterResults[1]],
+  totalItems: 20,
+  hasNextPage: false,
+  hasPreviousPage: true,
+};
+
 describe('App', () => {
   const fetchCharactersMock = vi.mocked(fetchCharacters);
 
@@ -55,6 +69,33 @@ describe('App', () => {
 
     expect(localStorage.getItem(SEARCH_TERM_STORAGE_KEY)).toBe('leia');
     expect(fetchCharactersMock).toHaveBeenLastCalledWith('leia', 1);
+  });
+
+  it('overwrites old search term in localStorage', async () => {
+    const user = userEvent.setup();
+    localStorage.setItem(SEARCH_TERM_STORAGE_KEY, 'old');
+    fetchCharactersMock.mockResolvedValue(emptyResult);
+
+    render(<App />);
+
+    await user.clear(screen.getByRole('searchbox'));
+    await user.type(screen.getByRole('searchbox'), 'new');
+    await user.click(screen.getByRole('button', { name: /^search$/i }));
+
+    expect(localStorage.getItem(SEARCH_TERM_STORAGE_KEY)).toBe('new');
+  });
+
+  it('does not search again when term is the same', async () => {
+    const user = userEvent.setup();
+    localStorage.setItem(SEARCH_TERM_STORAGE_KEY, 'luke');
+    fetchCharactersMock.mockResolvedValue(lukeResult);
+
+    render(<App />);
+
+    await screen.findByText('Luke Skywalker');
+    await user.click(screen.getByRole('button', { name: /^search$/i }));
+
+    expect(fetchCharactersMock).toHaveBeenCalledTimes(1);
   });
 
   it('shows API error message', async () => {
@@ -108,5 +149,37 @@ describe('App', () => {
 
     expect(fetchCharactersMock).toHaveBeenCalledTimes(2);
     expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+  });
+
+  it('loads next page after next click', async () => {
+    const user = userEvent.setup();
+
+    fetchCharactersMock
+      .mockResolvedValueOnce(firstPageResult)
+      .mockResolvedValueOnce(secondPageResult);
+
+    render(<App />);
+
+    expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /next/i }));
+
+    expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 2);
+    expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
+  });
+
+  it('loads selected page after page button click', async () => {
+    const user = userEvent.setup();
+
+    fetchCharactersMock
+      .mockResolvedValueOnce(firstPageResult)
+      .mockResolvedValueOnce(secondPageResult);
+
+    render(<App />);
+
+    expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: '2' }));
+
+    expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 2);
+    expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
   });
 });
