@@ -2,6 +2,7 @@ import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { SEARCH_TERM_STORAGE_KEY } from '../../constants/localStorage';
 import { ErrorButton } from '../ErrorButton/ErrorButton';
 import { getAssetUrl } from '../../utils/assets';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 const magnifierIcon = getAssetUrl('magnifier-svgrepo-com.svg');
 
@@ -11,9 +12,8 @@ interface SearchProps {
 }
 
 export function Search({ onSearch, onErrorButtonClick }: SearchProps) {
-  const [searchTerm, setSearchTerm] = useState<string>(
-    localStorage.getItem(SEARCH_TERM_STORAGE_KEY) ?? ''
-  );
+  const [savedSearchTerm] = useLocalStorage(SEARCH_TERM_STORAGE_KEY, '');
+  const [searchTerm, setSearchTerm] = useState<string>(savedSearchTerm);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
