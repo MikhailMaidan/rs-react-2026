@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fetchCharacters } from './api/charactersApi';
 import App from './App';
@@ -37,8 +38,28 @@ describe('App', () => {
     vi.restoreAllMocks();
   });
 
-  const renderApp = () => {
-    render(<App />);
+  const LocationDisplay = () => {
+    const location = useLocation();
+
+    return <span data-testid="location">{location.search}</span>;
+  };
+
+  const renderApp = (initialEntries = ['/']) => {
+    render(
+      <MemoryRouter initialEntries={initialEntries}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <App />
+                <LocationDisplay />
+              </>
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
   };
 
   const searchFor = async (searchTerm: string) => {
@@ -87,6 +108,7 @@ describe('App', () => {
 
       expect(localStorage.getItem(SEARCH_TERM_STORAGE_KEY)).toBe('leia');
       expect(fetchCharactersMock).toHaveBeenLastCalledWith('leia', 1);
+      expect(screen.getByTestId('location')).toHaveTextContent('?page=1');
     });
 
     it('overwrites old search term in localStorage', async () => {
@@ -114,6 +136,16 @@ describe('App', () => {
       await user.click(screen.getByRole('button', { name: /^search$/i }));
 
       expect(fetchCharactersMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('resets page to one after search', async () => {
+      fetchCharactersMock.mockResolvedValue(emptyResult);
+
+      renderApp(['/?page=3']);
+      await searchFor('leia');
+
+      expect(fetchCharactersMock).toHaveBeenLastCalledWith('leia', 1);
+      expect(screen.getByTestId('location')).toHaveTextContent('?page=1');
     });
   });
 

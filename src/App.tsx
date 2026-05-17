@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Header } from './components/Header/Header';
 import { Search } from './components/Search/Search';
 import { Results } from './components/Results/Results';
@@ -9,13 +10,20 @@ import { getAssetUrl } from './utils/assets';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import type { CharacterResult } from './types/character';
 
+const getPageFromSearchParams = (searchParams: URLSearchParams) => {
+  const page = Number(searchParams.get('page'));
+
+  return Number.isInteger(page) && page > 0 ? page : 1;
+};
+
 export default function App() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = useState<CharacterResult[]>([]);
   const [searchTerm, setSearchTerm] = useLocalStorage(
     SEARCH_TERM_STORAGE_KEY,
     ''
   );
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const currentPage = getPageFromSearchParams(searchParams);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
@@ -24,6 +32,15 @@ export default function App() {
   const [shouldThrowResultsError, setShouldThrowResultsError] =
     useState<boolean>(false);
   const [retryCount, setRetryCount] = useState<number>(0);
+
+  const updatePageInUrl = useCallback(
+    (page: number, replace = false) => {
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.set('page', String(page));
+      setSearchParams(nextSearchParams, { replace });
+    },
+    [searchParams, setSearchParams]
+  );
 
   const loadCharacters = useCallback(
     (currentSearchTerm: string, page: number, isActualRequest: () => boolean) => {
@@ -65,15 +82,21 @@ export default function App() {
     };
   }, [searchTerm, currentPage, retryCount, loadCharacters]);
 
+  useEffect(() => {
+    if (searchParams.get('page') !== String(currentPage)) {
+      updatePageInUrl(currentPage, true);
+    }
+  }, [currentPage, searchParams, updatePageInUrl]);
+
   const handleSearch = (newSearchTerm: string) => {
-    if (newSearchTerm === searchTerm) {
+    if (newSearchTerm === searchTerm && currentPage === 1) {
       return;
     }
 
     setIsLoading(true);
     setErrorMessage('');
     setSearchTerm(newSearchTerm);
-    setCurrentPage(1);
+    updatePageInUrl(1);
   };
 
   const handleErrorButtonClick = () => {
@@ -97,19 +120,19 @@ export default function App() {
 
     setIsLoading(true);
     setErrorMessage('');
-    setCurrentPage(page);
+    updatePageInUrl(page);
   };
 
   const handleNextPage = () => {
     setIsLoading(true);
     setErrorMessage('');
-    setCurrentPage((page) => page + 1);
+    updatePageInUrl(currentPage + 1);
   };
 
   const handlePreviousPage = () => {
     setIsLoading(true);
     setErrorMessage('');
-    setCurrentPage((page) => page - 1);
+    updatePageInUrl(currentPage - 1);
   };
 
   const backgroundImage = `url("${getAssetUrl('background-image.png')}")`;
