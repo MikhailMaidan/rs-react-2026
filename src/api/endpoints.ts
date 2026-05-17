@@ -4,6 +4,8 @@ export const ENDPOINTS = {
   people: `${API_BASE_URL}/people`,
 };
 
+export const buildPersonUrl = (id: string) => `${ENDPOINTS.people}/${id}`;
+
 export const buildPeopleUrl = (
   searchTerm: string,
   page: number,

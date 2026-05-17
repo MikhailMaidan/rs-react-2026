@@ -20,6 +20,7 @@ interface ResultsProps {
   onPageChange: (page: number) => void;
   onNextPage: () => void;
   onPreviousPage: () => void;
+  onItemSelect: (item: CharacterResult) => void;
 }
 
 const menuIcon = getAssetUrl('menu-svgrepo-com.svg');
@@ -39,6 +40,7 @@ export function Results({
   onPageChange,
   onNextPage,
   onPreviousPage,
+  onItemSelect,
 }: ResultsProps) {
   const subtitle = searchTerm
     ? `Showing results for "${searchTerm}"`
@@ -78,7 +80,7 @@ export function Results({
               </div>
             </div>
 
-            <CardList items={items} />
+            <CardList items={items} onItemSelect={onItemSelect} />
 
             <div className="mt-7 grid gap-5 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
               {totalPages > 0 && (

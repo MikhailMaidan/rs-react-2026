@@ -2,14 +2,19 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fetchCharacters } from './api/charactersApi';
+import { fetchCharacterDetails, fetchCharacters } from './api/charactersApi';
 import App from './App';
+import { DetailsPanel } from './components/DetailsPanel/DetailsPanel';
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
-import { mockCharacterResults } from './test-utils/characters';
+import {
+  mockCharacterResults,
+  mockCharactersResponse,
+} from './test-utils/characters';
 
 vi.mock('./api/charactersApi', () => ({
   ITEMS_PER_PAGE: 10,
   fetchCharacters: vi.fn(),
+  fetchCharacterDetails: vi.fn(),
 }));
 
 const emptyResult = {
@@ -28,10 +33,12 @@ const lukeResult = {
 
 describe('App', () => {
   const fetchCharactersMock = vi.mocked(fetchCharacters);
+  const fetchCharacterDetailsMock = vi.mocked(fetchCharacterDetails);
 
   beforeEach(() => {
     localStorage.clear();
     fetchCharactersMock.mockReset();
+    fetchCharacterDetailsMock.mockReset();
   });
 
   afterEach(() => {
@@ -48,16 +55,11 @@ describe('App', () => {
     render(
       <MemoryRouter initialEntries={initialEntries}>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <App />
-                <LocationDisplay />
-              </>
-            }
-          />
+          <Route path="/" element={<App />}>
+            <Route index element={<DetailsPanel />} />
+          </Route>
         </Routes>
+        <LocationDisplay />
       </MemoryRouter>
     );
   };
@@ -197,6 +199,45 @@ describe('App', () => {
       expect(
         await screen.findByText(/unable to render results/i)
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('details panel', () => {
+    it('opens and closes character details through URL params', async () => {
+      const user = userEvent.setup();
+      let finishLoadingDetails: (
+        value: (typeof mockCharactersResponse)[number]
+      ) => void = () => {};
+      const detailsPromise = new Promise<
+        (typeof mockCharactersResponse)[number]
+      >(
+        (resolve) => {
+          finishLoadingDetails = resolve;
+        }
+      );
+
+      fetchCharactersMock.mockResolvedValue(lukeResult);
+      fetchCharacterDetailsMock.mockReturnValue(detailsPromise);
+
+      renderApp(['/?page=2']);
+
+      await screen.findByText('Luke Skywalker');
+      await user.click(screen.getByText('Luke Skywalker'));
+
+      expect(screen.getByTestId('location')).toHaveTextContent(
+        '?page=2&details=1'
+      );
+      expect(fetchCharacterDetailsMock).toHaveBeenCalledWith('1');
+      expect(
+        screen.getByRole('status', { name: /loading results/i })
+      ).toBeInTheDocument();
+
+      finishLoadingDetails(mockCharactersResponse[0]);
+      expect(await screen.findByText('Birth year')).toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: /close details/i }));
+
+      expect(screen.getByTestId('location')).toHaveTextContent('?page=2');
     });
   });
 });

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Outlet, useSearchParams } from 'react-router-dom';
 import { Header } from './components/Header/Header';
 import { Search } from './components/Search/Search';
 import { Results } from './components/Results/Results';
@@ -16,6 +16,12 @@ const getPageFromSearchParams = (searchParams: URLSearchParams) => {
   return Number.isInteger(page) && page > 0 ? page : 1;
 };
 
+const getCharacterId = (url: string) => {
+  const parts = url.split('/').filter(Boolean);
+
+  return parts[parts.length - 1];
+};
+
 export default function App() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = useState<CharacterResult[]>([]);
@@ -24,6 +30,7 @@ export default function App() {
     ''
   );
   const currentPage = getPageFromSearchParams(searchParams);
+  const detailsId = searchParams.get('details');
   const [totalItems, setTotalItems] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
@@ -37,10 +44,24 @@ export default function App() {
     (page: number, replace = false) => {
       const nextSearchParams = new URLSearchParams(searchParams);
       nextSearchParams.set('page', String(page));
+      nextSearchParams.delete('details');
       setSearchParams(nextSearchParams, { replace });
     },
     [searchParams, setSearchParams]
   );
+
+  const openDetails = (item: CharacterResult) => {
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.set('page', String(currentPage));
+    nextSearchParams.set('details', getCharacterId(item.url));
+    setSearchParams(nextSearchParams);
+  };
+
+  const closeDetails = () => {
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.delete('details');
+    setSearchParams(nextSearchParams);
+  };
 
   const loadCharacters = useCallback(
     (currentSearchTerm: string, page: number, isActualRequest: () => boolean) => {
@@ -148,23 +169,33 @@ export default function App() {
           onSearch={handleSearch}
           onErrorButtonClick={handleErrorButtonClick}
         />
-        <ErrorBoundary onReset={handleResultsBoundaryReset}>
-          <Results
-            items={items}
-            searchTerm={searchTerm}
-            currentPage={currentPage}
-            totalItems={totalItems}
-            hasNextPage={hasNextPage}
-            hasPreviousPage={hasPreviousPage}
-            isLoading={isLoading}
-            errorMessage={errorMessage}
-            shouldThrowError={shouldThrowResultsError}
-            onRetry={handleRetry}
-            onPageChange={handlePageChange}
-            onNextPage={handleNextPage}
-            onPreviousPage={handlePreviousPage}
-          />
-        </ErrorBoundary>
+        <div
+          className={`mx-auto grid max-w-[1800px] gap-5 ${
+            detailsId ? 'xl:grid-cols-[minmax(0,1fr)_380px]' : ''
+          }`}
+        >
+          <ErrorBoundary onReset={handleResultsBoundaryReset}>
+            <Results
+              items={items}
+              searchTerm={searchTerm}
+              currentPage={currentPage}
+              totalItems={totalItems}
+              hasNextPage={hasNextPage}
+              hasPreviousPage={hasPreviousPage}
+              isLoading={isLoading}
+              errorMessage={errorMessage}
+              shouldThrowError={shouldThrowResultsError}
+              onRetry={handleRetry}
+              onPageChange={handlePageChange}
+              onNextPage={handleNextPage}
+              onPreviousPage={handlePreviousPage}
+              onItemSelect={openDetails}
+            />
+          </ErrorBoundary>
+          <div className="px-6 pb-10 sm:px-9 xl:px-0 xl:pr-9">
+            <Outlet context={{ onClose: closeDetails }} />
+          </div>
+        </div>
       </div>
     </main>
   );

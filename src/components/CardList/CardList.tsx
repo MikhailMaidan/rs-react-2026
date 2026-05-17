@@ -3,9 +3,10 @@ import type { CharacterResult } from '../../types/character';
 
 interface CardListProps {
   items: CharacterResult[];
+  onItemSelect: (item: CharacterResult) => void;
 }
 
-export function CardList({ items }: CardListProps) {
+export function CardList({ items, onItemSelect }: CardListProps) {
   if (items.length === 0) {
     return (
       <div className="rounded-[10px] border border-yellow-400 bg-zinc-950/80 px-8 py-14 text-center text-xl font-semibold text-zinc-300">
@@ -35,7 +36,7 @@ export function CardList({ items }: CardListProps) {
           </thead>
           <tbody>
             {items.map((item) => (
-              <Card key={item.url} item={item} />
+              <Card key={item.url} item={item} onSelect={onItemSelect} />
             ))}
           </tbody>
         </table>
