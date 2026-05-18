@@ -12,6 +12,10 @@ describe('Header', () => {
     );
 
     expect(screen.getByRole('img', { name: 'Starforge' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /plug/i })).toHaveAttribute(
+      'href',
+      '/plug'
+    );
     expect(screen.getByRole('link', { name: /about/i })).toHaveAttribute(
       'href',
       '/about'

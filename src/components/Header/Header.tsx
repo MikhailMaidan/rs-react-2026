@@ -17,12 +17,20 @@ export function Header() {
           alt="Starforge"
           className="h-auto w-[310px] max-w-[70vw] object-contain mix-blend-screen sm:w-[330px]"
         />
-        <Link
-          to="/about"
-          className="mt-2 hidden h-14 min-w-[170px] items-center justify-center rounded-lg border border-yellow-400 bg-zinc-950/80 px-5 text-[20px] font-bold text-white shadow-[0_0_20px_rgba(250,204,21,0.16)] transition hover:bg-yellow-400/10 sm:flex"
-        >
-          About
-        </Link>
+        <nav className="mt-2 hidden items-center gap-4 sm:flex">
+          <Link
+            to="/plug"
+            className="flex h-14 min-w-[150px] items-center justify-center rounded-lg border border-yellow-400 bg-zinc-950/80 px-5 text-[20px] font-bold text-white shadow-[0_0_20px_rgba(250,204,21,0.16)] transition hover:bg-yellow-400/10"
+          >
+            Plug
+          </Link>
+          <Link
+            to="/about"
+            className="flex h-14 min-w-[170px] items-center justify-center rounded-lg border border-yellow-400 bg-zinc-950/80 px-5 text-[20px] font-bold text-white shadow-[0_0_20px_rgba(250,204,21,0.16)] transition hover:bg-yellow-400/10"
+          >
+            About
+          </Link>
+        </nav>
       </div>
     </header>
   );
