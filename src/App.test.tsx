@@ -1,14 +1,20 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fetchCharacters } from './api/charactersApi';
+import { fetchCharacterDetails, fetchCharacters } from './api/charactersApi';
 import App from './App';
+import { DetailsPanel } from './components/DetailsPanel/DetailsPanel';
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
-import { mockCharacterResults } from './test-utils/characters';
+import {
+  mockCharacterResults,
+  mockCharactersResponse,
+} from './test-utils/characters';
 
 vi.mock('./api/charactersApi', () => ({
   ITEMS_PER_PAGE: 10,
   fetchCharacters: vi.fn(),
+  fetchCharacterDetails: vi.fn(),
 }));
 
 const emptyResult = {
@@ -27,18 +33,35 @@ const lukeResult = {
 
 describe('App', () => {
   const fetchCharactersMock = vi.mocked(fetchCharacters);
+  const fetchCharacterDetailsMock = vi.mocked(fetchCharacterDetails);
 
   beforeEach(() => {
     localStorage.clear();
     fetchCharactersMock.mockReset();
+    fetchCharacterDetailsMock.mockReset();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  const renderApp = () => {
-    render(<App />);
+  const LocationDisplay = () => {
+    const location = useLocation();
+
+    return <span data-testid="location">{location.search}</span>;
+  };
+
+  const renderApp = (initialEntries = ['/']) => {
+    render(
+      <MemoryRouter initialEntries={initialEntries}>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route index element={<DetailsPanel />} />
+          </Route>
+        </Routes>
+        <LocationDisplay />
+      </MemoryRouter>
+    );
   };
 
   const searchFor = async (searchTerm: string) => {
@@ -78,6 +101,17 @@ describe('App', () => {
     });
   });
 
+  describe('routing guard', () => {
+    it('shows 404 page for unsupported query params', () => {
+      renderApp(['/?xcs=&page=1']);
+
+      expect(
+        screen.getByRole('heading', { name: /page not found/i })
+      ).toBeInTheDocument();
+      expect(fetchCharactersMock).not.toHaveBeenCalled();
+    });
+  });
+
   describe('search and localStorage', () => {
     it('saves search term to localStorage after search', async () => {
       fetchCharactersMock.mockResolvedValue(emptyResult);
@@ -87,6 +121,7 @@ describe('App', () => {
 
       expect(localStorage.getItem(SEARCH_TERM_STORAGE_KEY)).toBe('leia');
       expect(fetchCharactersMock).toHaveBeenLastCalledWith('leia', 1);
+      expect(screen.getByTestId('location')).toHaveTextContent('?page=1');
     });
 
     it('overwrites old search term in localStorage', async () => {
@@ -114,6 +149,16 @@ describe('App', () => {
       await user.click(screen.getByRole('button', { name: /^search$/i }));
 
       expect(fetchCharactersMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('resets page to one after search', async () => {
+      fetchCharactersMock.mockResolvedValue(emptyResult);
+
+      renderApp(['/?page=3']);
+      await searchFor('leia');
+
+      expect(fetchCharactersMock).toHaveBeenLastCalledWith('leia', 1);
+      expect(screen.getByTestId('location')).toHaveTextContent('?page=1');
     });
   });
 
@@ -165,6 +210,87 @@ describe('App', () => {
       expect(
         await screen.findByText(/unable to render results/i)
       ).toBeInTheDocument();
+    });
+
+    it('resets error boundary after a new search', async () => {
+      const user = userEvent.setup();
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+      fetchCharactersMock.mockResolvedValue(emptyResult);
+
+      renderApp();
+
+      await user.click(
+        screen.getAllByRole('button', { name: /error button/i })[0]
+      );
+      expect(
+        await screen.findByText(/unable to render results/i)
+      ).toBeInTheDocument();
+
+      await user.type(screen.getByRole('searchbox'), 'vader');
+      await user.click(screen.getByRole('button', { name: /^search$/i }));
+
+      expect(fetchCharactersMock).toHaveBeenLastCalledWith('vader', 1);
+      expect(await screen.findByText('No results found')).toBeInTheDocument();
+    });
+
+    it('resets lower error button boundary after same empty search', async () => {
+      const user = userEvent.setup();
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+      fetchCharactersMock.mockResolvedValue(emptyResult);
+
+      renderApp();
+
+      await screen.findByText('No results found');
+      await user.click(
+        screen.getAllByRole('button', { name: /error button/i })[1]
+      );
+      expect(
+        await screen.findByText(/unable to render results/i)
+      ).toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: /^search$/i }));
+
+      expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 1);
+      expect(await screen.findByText('No results found')).toBeInTheDocument();
+    });
+  });
+
+  describe('details panel', () => {
+    it('opens and closes character details through URL params', async () => {
+      const user = userEvent.setup();
+      let finishLoadingDetails: (
+        value: (typeof mockCharactersResponse)[number]
+      ) => void = () => {};
+      const detailsPromise = new Promise<
+        (typeof mockCharactersResponse)[number]
+      >(
+        (resolve) => {
+          finishLoadingDetails = resolve;
+        }
+      );
+
+      fetchCharactersMock.mockResolvedValue(lukeResult);
+      fetchCharacterDetailsMock.mockReturnValue(detailsPromise);
+
+      renderApp(['/?page=2']);
+
+      await screen.findByText('Luke Skywalker');
+      await user.click(screen.getByText('Luke Skywalker'));
+
+      expect(screen.getByTestId('location')).toHaveTextContent(
+        '?page=2&details=1'
+      );
+      expect(fetchCharacterDetailsMock).toHaveBeenCalledWith('1');
+      expect(
+        screen.getByRole('status', { name: /loading results/i })
+      ).toBeInTheDocument();
+
+      finishLoadingDetails(mockCharactersResponse[0]);
+      expect(await screen.findByText('Birth year')).toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: /close details/i }));
+
+      expect(screen.getByTestId('location')).toHaveTextContent('?page=2');
     });
   });
 });

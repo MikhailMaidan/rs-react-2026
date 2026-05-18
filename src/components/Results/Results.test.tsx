@@ -21,6 +21,7 @@ const defaultProps: ResultsProps = {
   onPageChange: vi.fn(),
   onNextPage: vi.fn(),
   onPreviousPage: vi.fn(),
+  onItemSelect: vi.fn(),
 };
 
 const renderResults = (props: Partial<ResultsProps> = {}) => {

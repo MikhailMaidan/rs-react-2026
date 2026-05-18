@@ -2,9 +2,14 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
 
+process.env.BROWSER ??= 'chrome';
+
 export default defineConfig({
   base: '/rs-react-2026/',
   plugins: [react(), tailwindcss()],
+  server: {
+    open: true,
+  },
   test: {
     environment: 'jsdom',
     globals: true,

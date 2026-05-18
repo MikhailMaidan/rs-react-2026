@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - unit-testing
+      - hooks-and-routing
   workflow_dispatch:
 
 permissions:

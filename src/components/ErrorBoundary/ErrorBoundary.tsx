@@ -4,6 +4,7 @@ import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 interface ErrorBoundaryProps {
   children: ReactNode;
   onReset?: () => void;
+  onError?: () => void;
 }
 
 interface ErrorBoundaryState {
@@ -24,6 +25,7 @@ export class ErrorBoundary extends Component<
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Application error boundary caught an error:', error, errorInfo);
+    this.props.onError?.();
   }
 
   handleReset = () => {
@@ -34,7 +36,7 @@ export class ErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <section className="mx-auto max-w-[1800px] px-6 pb-10 sm:px-9">
+        <section className="col-span-full w-full px-6 pb-10 sm:px-9">
           <ErrorMessage
             title="Unable to render results"
             message="Something went wrong inside the application. The error was caught safely."

@@ -1,6 +1,6 @@
-import { buildPeopleUrl } from './endpoints';
+import { buildPeopleUrl, buildPersonUrl } from './endpoints';
 import type { CharactersResponse } from '../types/api';
-import type { CharacterResult } from '../types/character';
+import type { Character, CharacterResult } from '../types/character';
 
 export interface CharactersData {
   items: CharacterResult[];
@@ -53,4 +53,18 @@ export const fetchCharacters = async (
     hasNextPage: page * ITEMS_PER_PAGE < filteredCharacters.length,
     hasPreviousPage: page > 1,
   };
+};
+
+export const fetchCharacterDetails = async (
+  id: string
+): Promise<Character> => {
+  await wait(loadingDelay);
+
+  const response = await fetch(buildPersonUrl(id));
+
+  if (!response.ok) {
+    throw new Error('Unable to load details. Please try again.');
+  }
+
+  return (await response.json()) as Character;
 };

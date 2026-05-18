@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fetchCharacters } from './api/charactersApi';
 import App from './App';
@@ -35,34 +36,62 @@ describe('App pagination', () => {
       .mockResolvedValueOnce(secondPageResult);
   });
 
+  const LocationDisplay = () => {
+    const location = useLocation();
+
+    return <span data-testid="location">{location.search}</span>;
+  };
+
+  const renderApp = (initialEntries = ['/']) => {
+    render(
+      <MemoryRouter initialEntries={initialEntries}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <App />
+                <LocationDisplay />
+              </>
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+  };
+
   it('loads next page after next click', async () => {
     const user = userEvent.setup();
 
-    render(<App />);
+    renderApp();
 
     expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent('?page=1');
+
     await user.click(screen.getByRole('button', { name: /next/i }));
 
     expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 2);
+    expect(screen.getByTestId('location')).toHaveTextContent('?page=2');
     expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
   });
 
   it('loads selected page after page button click', async () => {
     const user = userEvent.setup();
 
-    render(<App />);
+    renderApp();
 
     expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: '2' }));
 
     expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 2);
+    expect(screen.getByTestId('location')).toHaveTextContent('?page=2');
     expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
   });
 
   it('loads previous page after previous click', async () => {
     const user = userEvent.setup();
 
-    render(<App />);
+    renderApp();
 
     expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /next/i }));
@@ -72,6 +101,18 @@ describe('App pagination', () => {
     await user.click(screen.getByRole('button', { name: /previous/i }));
 
     expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 1);
+    expect(screen.getByTestId('location')).toHaveTextContent('?page=1');
     expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+  });
+
+  it('loads page from URL on first render', async () => {
+    fetchCharactersMock.mockReset();
+    fetchCharactersMock.mockResolvedValueOnce(secondPageResult);
+
+    renderApp(['/?page=2']);
+
+    expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 2);
+    expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent('?page=2');
   });
 });
