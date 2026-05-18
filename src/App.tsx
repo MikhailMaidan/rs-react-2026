@@ -4,6 +4,7 @@ import { Header } from './components/Header/Header';
 import { Search } from './components/Search/Search';
 import { Results } from './components/Results/Results';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
+import { NotFound } from './components/NotFound/NotFound';
 import { fetchCharacters } from './api/charactersApi';
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
 import { getAssetUrl } from './utils/assets';
@@ -22,6 +23,8 @@ const getCharacterId = (url: string) => {
   return parts[parts.length - 1];
 };
 
+const allowedSearchParams = ['page', 'details'];
+
 export default function App() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = useState<CharacterResult[]>([]);
@@ -31,6 +34,9 @@ export default function App() {
   );
   const currentPage = getPageFromSearchParams(searchParams);
   const detailsId = searchParams.get('details');
+  const hasUnknownSearchParam = Array.from(searchParams.keys()).some(
+    (key) => !allowedSearchParams.includes(key)
+  );
   const [totalItems, setTotalItems] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
@@ -97,6 +103,10 @@ export default function App() {
   );
 
   useEffect(() => {
+    if (hasUnknownSearchParam) {
+      return;
+    }
+
     let isActualRequest = true;
 
     loadCharacters(searchTerm, currentPage, () => isActualRequest);
@@ -104,13 +114,23 @@ export default function App() {
     return () => {
       isActualRequest = false;
     };
-  }, [searchTerm, currentPage, retryCount, loadCharacters]);
+  }, [
+    searchTerm,
+    currentPage,
+    retryCount,
+    loadCharacters,
+    hasUnknownSearchParam,
+  ]);
 
   useEffect(() => {
+    if (hasUnknownSearchParam) {
+      return;
+    }
+
     if (searchParams.get('page') !== String(currentPage)) {
       updatePageInUrl(currentPage, true);
     }
-  }, [currentPage, searchParams, updatePageInUrl]);
+  }, [currentPage, searchParams, updatePageInUrl, hasUnknownSearchParam]);
 
   const handleSearch = (newSearchTerm: string) => {
     const isSameSearch = newSearchTerm === searchTerm && currentPage === 1;
@@ -176,6 +196,10 @@ export default function App() {
   };
 
   const backgroundImage = `url("${getAssetUrl('background-image.png')}")`;
+
+  if (hasUnknownSearchParam) {
+    return <NotFound />;
+  }
 
   return (
     <main className="min-h-screen bg-black text-slate-100">

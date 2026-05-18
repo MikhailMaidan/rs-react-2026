@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>StarForge 404</title>
+  </head>
+  <body>
+    <script>
+      const basePath = '/rs-react-2026/';
+      const missingPath = window.location.pathname
+        .replace(basePath, '')
+        .replace(/^\//, '');
+      const missingRoute = `${missingPath}${window.location.search}${window.location.hash}`;
+
+      window.location.replace(
+        `${basePath}?notFound=${encodeURIComponent(missingRoute)}`
+      );
+    </script>
+  </body>
+</html>

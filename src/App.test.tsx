@@ -101,6 +101,17 @@ describe('App', () => {
     });
   });
 
+  describe('routing guard', () => {
+    it('shows 404 page for unsupported query params', () => {
+      renderApp(['/?xcs=&page=1']);
+
+      expect(
+        screen.getByRole('heading', { name: /page not found/i })
+      ).toBeInTheDocument();
+      expect(fetchCharactersMock).not.toHaveBeenCalled();
+    });
+  });
+
   describe('search and localStorage', () => {
     it('saves search term to localStorage after search', async () => {
       fetchCharactersMock.mockResolvedValue(emptyResult);
