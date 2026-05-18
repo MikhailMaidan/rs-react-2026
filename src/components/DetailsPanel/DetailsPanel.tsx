@@ -72,7 +72,7 @@ export function DetailsPanel() {
         </div>
         <button
           type="button"
-          className="h-10 w-10 rounded-md border border-yellow-400 bg-zinc-950/80 text-xl font-bold text-white transition hover:bg-yellow-400/10"
+          className="flex h-10 w-10 items-center justify-center rounded-md border border-yellow-400 bg-zinc-950/80 text-xl font-bold leading-none text-white transition hover:bg-yellow-400/10"
           aria-label="Close details"
           onClick={onClose}
         >

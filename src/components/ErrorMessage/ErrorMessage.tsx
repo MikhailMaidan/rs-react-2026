@@ -24,11 +24,11 @@ export function ErrorMessage({
 
   return (
     <div
-      className="relative overflow-hidden rounded-[10px] border border-red-500 bg-black bg-cover bg-center px-6 py-14 text-center shadow-[0_0_28px_rgba(239,68,68,0.12)] sm:px-10"
+      className="relative w-full overflow-hidden rounded-[10px] border border-red-500 bg-black bg-cover bg-center px-6 py-14 text-center shadow-[0_0_28px_rgba(239,68,68,0.12)] sm:px-10"
       style={{ backgroundImage }}
     >
-      <div className="absolute inset-0 bg-black/30" />
-      <div className="relative z-10 mx-auto max-w-[860px]">
+      <div className="absolute inset-0 bg-black/45" />
+      <div className="relative z-10 mx-auto max-w-[900px]">
         <img
           src={attentionIcon}
           alt=""
@@ -39,7 +39,7 @@ export function ErrorMessage({
           {message}
         </p>
 
-        <div className="my-7 h-px bg-red-500" />
+        <div className="mx-auto my-7 h-px max-w-[860px] bg-red-500" />
 
         <div className="mx-auto max-w-[760px] rounded-[10px] border border-zinc-700 bg-zinc-950/80 p-6 text-left">
           <p className="text-[18px] font-semibold text-white">
@@ -91,7 +91,7 @@ export function ErrorMessage({
               or
               <span className="h-px flex-1 bg-zinc-700" />
             </div>
-            <ErrorButton />
+            <ErrorButton variant="error" />
           </>
         )}
 

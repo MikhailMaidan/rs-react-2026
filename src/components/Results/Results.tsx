@@ -56,8 +56,8 @@ export function Results({
   }
 
   return (
-    <section className="mx-auto max-w-[1800px] px-6 pb-10 sm:px-9">
-      <div className="relative rounded-[14px] border border-yellow-400 bg-black/85 p-6 shadow-[0_0_30px_rgba(250,204,21,0.08)] sm:p-8">
+    <section className="mx-auto w-full max-w-[1800px] px-6 pb-10 sm:px-9">
+      <div className="relative w-full rounded-[14px] border border-yellow-400 bg-black/85 p-6 shadow-[0_0_30px_rgba(250,204,21,0.08)] sm:p-8">
         {isLoading && <Loader />}
 
         {errorMessage ? (

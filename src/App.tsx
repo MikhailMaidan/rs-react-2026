@@ -38,6 +38,9 @@ export default function App() {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [shouldThrowResultsError, setShouldThrowResultsError] =
     useState<boolean>(false);
+  const [hasResultsBoundaryError, setHasResultsBoundaryError] =
+    useState<boolean>(false);
+  const [resultsBoundaryKey, setResultsBoundaryKey] = useState<number>(0);
   const [retryCount, setRetryCount] = useState<number>(0);
 
   const updatePageInUrl = useCallback(
@@ -110,22 +113,38 @@ export default function App() {
   }, [currentPage, searchParams, updatePageInUrl]);
 
   const handleSearch = (newSearchTerm: string) => {
-    if (newSearchTerm === searchTerm && currentPage === 1) {
+    const isSameSearch = newSearchTerm === searchTerm && currentPage === 1;
+
+    if (isSameSearch && !shouldThrowResultsError && !hasResultsBoundaryError) {
       return;
     }
 
+    setShouldThrowResultsError(false);
+    setHasResultsBoundaryError(false);
+    setResultsBoundaryKey((key) => key + 1);
     setIsLoading(true);
     setErrorMessage('');
-    setSearchTerm(newSearchTerm);
-    updatePageInUrl(1);
+
+    if (!isSameSearch) {
+      setSearchTerm(newSearchTerm);
+      updatePageInUrl(1);
+    } else {
+      setRetryCount((currentRetryCount) => currentRetryCount + 1);
+    }
   };
 
   const handleErrorButtonClick = () => {
     setShouldThrowResultsError(true);
   };
 
+  const handleResultsBoundaryError = () => {
+    setHasResultsBoundaryError(true);
+  };
+
   const handleResultsBoundaryReset = () => {
     setShouldThrowResultsError(false);
+    setHasResultsBoundaryError(false);
+    setResultsBoundaryKey((key) => key + 1);
   };
 
   const handleRetry = () => {
@@ -170,11 +189,15 @@ export default function App() {
           onErrorButtonClick={handleErrorButtonClick}
         />
         <div
-          className={`mx-auto grid max-w-[1800px] gap-5 ${
+          className={`mx-auto grid w-full max-w-[1800px] grid-cols-1 gap-5 ${
             detailsId ? 'xl:grid-cols-[minmax(0,1fr)_380px]' : ''
           }`}
         >
-          <ErrorBoundary onReset={handleResultsBoundaryReset}>
+          <ErrorBoundary
+            key={resultsBoundaryKey}
+            onError={handleResultsBoundaryError}
+            onReset={handleResultsBoundaryReset}
+          >
             <Results
               items={items}
               searchTerm={searchTerm}

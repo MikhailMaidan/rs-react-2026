@@ -200,6 +200,48 @@ describe('App', () => {
         await screen.findByText(/unable to render results/i)
       ).toBeInTheDocument();
     });
+
+    it('resets error boundary after a new search', async () => {
+      const user = userEvent.setup();
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+      fetchCharactersMock.mockResolvedValue(emptyResult);
+
+      renderApp();
+
+      await user.click(
+        screen.getAllByRole('button', { name: /error button/i })[0]
+      );
+      expect(
+        await screen.findByText(/unable to render results/i)
+      ).toBeInTheDocument();
+
+      await user.type(screen.getByRole('searchbox'), 'vader');
+      await user.click(screen.getByRole('button', { name: /^search$/i }));
+
+      expect(fetchCharactersMock).toHaveBeenLastCalledWith('vader', 1);
+      expect(await screen.findByText('No results found')).toBeInTheDocument();
+    });
+
+    it('resets lower error button boundary after same empty search', async () => {
+      const user = userEvent.setup();
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+      fetchCharactersMock.mockResolvedValue(emptyResult);
+
+      renderApp();
+
+      await screen.findByText('No results found');
+      await user.click(
+        screen.getAllByRole('button', { name: /error button/i })[1]
+      );
+      expect(
+        await screen.findByText(/unable to render results/i)
+      ).toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: /^search$/i }));
+
+      expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 1);
+      expect(await screen.findByText('No results found')).toBeInTheDocument();
+    });
   });
 
   describe('details panel', () => {
