@@ -20,15 +20,21 @@ export const selectedItemsSlice = createSlice({
       );
 
       if (existingItem) {
-        state.items = state.items.filter(
-          (selectedItem) => selectedItem.url !== item.url
-        );
-      } else {
-        state.items.push(item);
+        return {
+          items: state.items.filter(
+            (selectedItem) => selectedItem.url !== item.url
+          ),
+        };
       }
+
+      return {
+        items: [...state.items, item],
+      };
     },
-    clearSelectedItems: (state) => {
-      state.items = [];
+    clearSelectedItems: () => {
+      return {
+        items: [],
+      };
     },
   },
 });
