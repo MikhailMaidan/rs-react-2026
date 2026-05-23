@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ComponentProps } from 'react';
+import { Provider } from 'react-redux';
 import { describe, expect, it, vi } from 'vitest';
 import { mockCharacterResults } from '../../test-utils/characters';
+import { createAppStore } from '../../store/store';
 import { Results } from './Results';
 
 type ResultsProps = ComponentProps<typeof Results>;
@@ -25,7 +27,11 @@ const defaultProps: ResultsProps = {
 };
 
 const renderResults = (props: Partial<ResultsProps> = {}) => {
-  render(<Results {...defaultProps} {...props} />);
+  render(
+    <Provider store={createAppStore()}>
+      <Results {...defaultProps} {...props} />
+    </Provider>
+  );
 };
 
 describe('Results', () => {

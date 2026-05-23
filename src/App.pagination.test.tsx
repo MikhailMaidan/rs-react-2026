@@ -1,9 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fetchCharacters } from './api/charactersApi';
 import App from './App';
+import { createAppStore } from './store/store';
 import { mockCharacterResults } from './test-utils/characters';
 
 vi.mock('./api/charactersApi', () => ({
@@ -44,19 +46,21 @@ describe('App pagination', () => {
 
   const renderApp = (initialEntries = ['/']) => {
     render(
-      <MemoryRouter initialEntries={initialEntries}>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <App />
-                <LocationDisplay />
-              </>
-            }
-          />
-        </Routes>
-      </MemoryRouter>
+      <Provider store={createAppStore()}>
+        <MemoryRouter initialEntries={initialEntries}>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <App />
+                  <LocationDisplay />
+                </>
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      </Provider>
     );
   };
 

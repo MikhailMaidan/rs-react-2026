@@ -20,14 +20,16 @@ export function CardList({ items, onItemSelect }: CardListProps) {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[760px] table-fixed border-collapse font-mono text-[18px] leading-relaxed">
           <colgroup>
-            <col className="w-[48%]" />
-            <col className="w-[52%]" />
+            <col className="w-16" />
+            <col className="w-[45%]" />
+            <col className="w-[55%]" />
           </colgroup>
           <caption className="border-b border-yellow-400/60 px-6 py-4 text-center text-[20px] font-bold text-white">
             Results
           </caption>
           <thead>
             <tr className="border-b border-yellow-400/60 text-left text-zinc-100">
+              <th className="py-4 pl-6 pr-2 font-semibold">Select</th>
               <th className="py-4 pl-10 pr-6 font-semibold">Item Name</th>
               <th className="py-4 pl-6 pr-10 font-semibold">
                 Item Description
