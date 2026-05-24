@@ -1,15 +1,23 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
+import { ThemeProvider } from '../../context/ThemeProvider';
 import { Header } from './Header';
 
 describe('Header', () => {
-  it('renders logo image', () => {
+  const renderHeader = () => {
     render(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>
+      <ThemeProvider>
+        <MemoryRouter>
+          <Header />
+        </MemoryRouter>
+      </ThemeProvider>
     );
+  };
+
+  it('renders logo image', () => {
+    renderHeader();
 
     expect(screen.getByRole('img', { name: 'Starforge' })).toBeInTheDocument();
     expect(screen.getByLabelText(/go to main page/i)).toHaveAttribute(
@@ -24,5 +32,18 @@ describe('Header', () => {
       'href',
       '/about'
     );
+  });
+
+  it('changes theme after button click', async () => {
+    const user = userEvent.setup();
+
+    renderHeader();
+
+    expect(document.documentElement.dataset.theme).toBe('dark');
+
+    await user.click(screen.getByRole('button', { name: /light/i }));
+
+    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(screen.getByRole('button', { name: /dark/i })).toBeInTheDocument();
   });
 });

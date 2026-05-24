@@ -1,5 +1,40 @@
 @import 'tailwindcss';
 
+[data-theme='light'] body {
+  background-color: #f4f4f5;
+}
+
+[data-theme='light'] main,
+[data-theme='light'] .bg-black {
+  background-color: #f4f4f5;
+  color: #18181b;
+}
+
+[data-theme='light'] .bg-black\/85,
+[data-theme='light'] .bg-black\/90,
+[data-theme='light'] .bg-zinc-950,
+[data-theme='light'] .bg-zinc-950\/70,
+[data-theme='light'] .bg-zinc-950\/80,
+[data-theme='light'] .bg-zinc-900\/80 {
+  background-color: rgb(255 255 255 / 0.9);
+}
+
+[data-theme='light'] .text-white,
+[data-theme='light'] .text-slate-100,
+[data-theme='light'] .text-zinc-100,
+[data-theme='light'] .text-zinc-200,
+[data-theme='light'] .text-zinc-300 {
+  color: #18181b;
+}
+
+[data-theme='light'] input {
+  color: #18181b;
+}
+
+[data-theme='light'] header > img {
+  opacity: 0.25;
+}
+
 .icon-gold {
   filter: brightness(0) saturate(100%) invert(77%) sepia(92%) saturate(1068%)
     hue-rotate(356deg) brightness(101%) contrast(104%);

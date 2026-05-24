@@ -7,20 +7,23 @@ import App from './App.tsx';
 import { About } from './components/About/About.tsx';
 import { DetailsPanel } from './components/DetailsPanel/DetailsPanel.tsx';
 import { NotFound } from './components/NotFound/NotFound.tsx';
+import { ThemeProvider } from './context/ThemeProvider.tsx';
 import { store } from './store/store.ts';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Provider store={store}>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <Routes>
-          <Route path="/" element={<App />}>
-            <Route index element={<DetailsPanel />} />
-          </Route>
-          <Route path="/about" element={<About />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </Provider>
+    <ThemeProvider>
+      <Provider store={store}>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
+          <Routes>
+            <Route path="/" element={<App />}>
+              <Route index element={<DetailsPanel />} />
+            </Route>
+            <Route path="/about" element={<About />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </Provider>
+    </ThemeProvider>
   </StrictMode>
 );
