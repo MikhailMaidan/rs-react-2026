@@ -31,8 +31,8 @@
   color: #18181b;
 }
 
-[data-theme='light'] header > img {
-  opacity: 0.25;
+[data-theme='light'] header.bg-black {
+  background-color: #000;
 }
 
 .icon-gold {

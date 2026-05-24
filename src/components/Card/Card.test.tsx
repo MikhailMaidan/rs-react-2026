@@ -55,4 +55,16 @@ describe('Card', () => {
       mockCharacterResults[0],
     ]);
   });
+
+  it('unchecks selected item', async () => {
+    const user = userEvent.setup();
+    const { store } = renderCard();
+    const checkbox = screen.getByRole('checkbox', { name: /select luke/i });
+
+    await user.click(checkbox);
+    await user.click(checkbox);
+
+    expect(checkbox).not.toBeChecked();
+    expect(store.getState().selectedItems.items).toEqual([]);
+  });
 });

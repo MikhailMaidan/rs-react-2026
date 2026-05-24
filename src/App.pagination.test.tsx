@@ -45,8 +45,10 @@ describe('App pagination', () => {
   };
 
   const renderApp = (initialEntries = ['/']) => {
+    const store = createAppStore();
+
     render(
-      <Provider store={createAppStore()}>
+      <Provider store={store}>
         <MemoryRouter initialEntries={initialEntries}>
           <Routes>
             <Route
@@ -62,6 +64,8 @@ describe('App pagination', () => {
         </MemoryRouter>
       </Provider>
     );
+
+    return store;
   };
 
   it('loads next page after next click', async () => {
@@ -118,5 +122,26 @@ describe('App pagination', () => {
     expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 2);
     expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
     expect(screen.getByTestId('location')).toHaveTextContent('?page=2');
+  });
+
+  it('keeps selected item after page navigation', async () => {
+    const user = userEvent.setup();
+    const store = renderApp();
+
+    expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+    await user.click(screen.getByRole('checkbox', { name: /select luke/i }));
+
+    expect(screen.getByText('Selected: 1')).toBeInTheDocument();
+    expect(store.getState().selectedItems.items).toEqual([
+      mockCharacterResults[0],
+    ]);
+
+    await user.click(screen.getByRole('button', { name: /next/i }));
+
+    expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
+    expect(screen.getByText('Selected: 1')).toBeInTheDocument();
+    expect(store.getState().selectedItems.items).toEqual([
+      mockCharacterResults[0],
+    ]);
   });
 });
