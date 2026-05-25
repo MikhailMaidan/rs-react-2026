@@ -2,7 +2,6 @@ import { CardList } from '../CardList/CardList';
 import { ErrorButton } from '../ErrorButton/ErrorButton';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { Loader } from '../Loader/Loader';
-import { SelectedItemsFlyout } from '../SelectedItemsFlyout/SelectedItemsFlyout';
 import { ITEMS_PER_PAGE } from '../../api/charactersApi';
 import { getAssetUrl } from '../../utils/assets';
 import type { CharacterResult } from '../../types/character';
@@ -128,8 +127,6 @@ export function Results({
                 <ErrorButton />
               </div>
             </div>
-
-            <SelectedItemsFlyout />
           </>
         )}
       </div>

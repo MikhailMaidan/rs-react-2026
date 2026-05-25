@@ -5,6 +5,7 @@ import { Search } from './components/Search/Search';
 import { Results } from './components/Results/Results';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import { NotFound } from './components/NotFound/NotFound';
+import { SelectedItemsFlyout } from './components/SelectedItemsFlyout/SelectedItemsFlyout';
 import { fetchCharacters } from './api/charactersApi';
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
 import { getAssetUrl } from './utils/assets';
@@ -243,6 +244,7 @@ export default function App() {
             <Outlet context={{ onClose: closeDetails }} />
           </div>
         </div>
+        <SelectedItemsFlyout />
       </div>
     </main>
   );

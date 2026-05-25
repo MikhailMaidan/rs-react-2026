@@ -39,7 +39,7 @@ export function SelectedItemsFlyout() {
   };
 
   return (
-    <div className="sticky bottom-4 z-20 mt-8 rounded-lg border border-yellow-400 bg-zinc-950 px-5 py-4 shadow-[0_0_30px_rgba(250,204,21,0.18)]">
+    <div className="fixed bottom-4 left-4 right-4 z-30 mx-auto max-w-[1700px] rounded-lg border border-yellow-400 bg-zinc-950 px-5 py-4 shadow-[0_0_30px_rgba(250,204,21,0.18)]">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-lg font-bold text-white">
           Selected: {selectedItems.length}
