@@ -31,8 +31,6 @@ export const ErrorMessage = ({
       <div className="relative z-10 mx-auto max-w-[900px]">
         <img
           src={attentionIcon}
-          alt=""
-          aria-hidden="true"
           className="error-icon-red mx-auto block h-16 w-16"
         />
         <h2 className="mt-5 text-[28px] font-bold text-white">{title}</h2>
@@ -50,8 +48,6 @@ export const ErrorMessage = ({
             <li className="flex items-center gap-4">
               <img
                 src={updateIcon}
-                alt=""
-                aria-hidden="true"
                 className="error-icon-red h-6 w-6 shrink-0"
               />
               Click &quot;Try Again&quot; to reload the results
@@ -59,8 +55,6 @@ export const ErrorMessage = ({
             <li className="flex items-center gap-4">
               <img
                 src={magnifierIcon}
-                alt=""
-                aria-hidden="true"
                 className="error-icon-red h-6 w-6 shrink-0"
               />
               Try different search terms
@@ -68,8 +62,6 @@ export const ErrorMessage = ({
             <li className="flex items-center gap-4">
               <img
                 src={wifiIcon}
-                alt=""
-                aria-hidden="true"
                 className="error-icon-red h-6 w-6 shrink-0"
               />
               Check your internet connection
@@ -85,8 +77,6 @@ export const ErrorMessage = ({
           >
             <img
               src={updateIcon}
-              alt=""
-              aria-hidden="true"
               className="error-icon-red h-6 w-6"
             />
             Try Again

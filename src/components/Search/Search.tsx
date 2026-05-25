@@ -33,8 +33,6 @@ export const Search = ({ onSearch }: SearchProps) => {
             <div className="flex items-center gap-3">
               <img
                 src={magnifierIcon}
-                alt=""
-                aria-hidden="true"
                 className="icon-gold h-6 w-6"
               />
               <h1 className="text-[22px] font-bold leading-none text-white">
@@ -61,8 +59,6 @@ export const Search = ({ onSearch }: SearchProps) => {
             <button type="submit" className="search-button">
               <img
                 src={magnifierIcon}
-                alt=""
-                aria-hidden="true"
                 className="icon-black h-5 w-5"
               />
               Search

@@ -59,7 +59,7 @@ export const DetailsPanel = () => {
 
   return (
     <aside className="details-panel">
-      {isLoading && <Loader />}
+      {isLoading && <Loader place="center" />}
 
       <div className="flex items-start justify-between gap-4">
         <div>

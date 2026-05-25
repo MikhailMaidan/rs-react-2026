@@ -10,8 +10,6 @@ export const Header = () => {
     <header className="relative h-[66px] overflow-hidden border-b border-zinc-900 bg-black sm:h-[70px]">
       <img
         src={getAssetUrl('header.png')}
-        alt=""
-        aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/10" />

@@ -433,7 +433,7 @@
   bottom: 1rem;
   left: 1rem;
   z-index: 30;
-  max-width: 1700px;
+  max-width: calc(1500px - 2rem);
   margin: 0 auto;
   padding: 0.75rem 1rem;
   border: 1px solid #facc15;
@@ -443,6 +443,12 @@
 }
 
 @media (min-width: 640px) {
+  .selected-flyout {
+    right: 1.5rem;
+    left: 1.5rem;
+    max-width: calc(1500px - 3rem);
+  }
+
   .about-section {
     padding-right: 1.25rem;
     padding-left: 1.25rem;

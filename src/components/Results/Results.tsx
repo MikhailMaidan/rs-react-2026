@@ -52,7 +52,7 @@ export const Results = ({
   return (
     <section className="mx-auto w-full max-w-[1500px] px-4 pb-8 sm:px-6">
       <div className="results-card">
-        {isLoading && <Loader />}
+        {isLoading && <Loader place="results" />}
 
         {errorMessage ? (
           <ErrorMessage message={errorMessage} onRetry={onRetry} />
@@ -63,8 +63,6 @@ export const Results = ({
                 <div className="flex items-center gap-3">
                   <img
                     src={menuIcon}
-                    alt=""
-                    aria-hidden="true"
                     className="icon-gold h-6 w-6"
                   />
                   <h2 className="text-[22px] font-bold leading-none text-white">

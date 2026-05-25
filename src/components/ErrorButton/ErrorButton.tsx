@@ -43,8 +43,6 @@ export const ErrorButton = ({
     >
       <img
         src={attentionIcon}
-        alt=""
-        aria-hidden="true"
         className="icon-gold h-4 w-4 shrink-0"
       />
       <span className="whitespace-nowrap">Error Button</span>
