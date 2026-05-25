@@ -4,11 +4,11 @@ import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './index.css';
 import App from './App.tsx';
-import { About } from './components/About/About.tsx';
-import { DetailsPanel } from './components/DetailsPanel/DetailsPanel.tsx';
-import { NotFound } from './components/NotFound/NotFound.tsx';
-import { ThemeProvider } from './context/ThemeProvider.tsx';
-import { store } from './store/store.ts';
+import { About } from './components/About';
+import { DetailsPanel } from './components/DetailsPanel';
+import { NotFound } from './components/NotFound';
+import { ThemeProvider } from './context';
+import { store } from './store';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

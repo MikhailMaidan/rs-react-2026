@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
-import { About } from './components/About/About';
-import { NotFound } from './components/NotFound/NotFound';
+import { About } from './components/About';
+import { NotFound } from './components/NotFound';
 
 const renderRoute = (route: string) => {
   render(

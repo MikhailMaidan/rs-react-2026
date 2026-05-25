@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
-import { ThemeProvider } from '../../context/ThemeProvider';
+import { ThemeProvider } from '../../context';
 import { Header } from './Header';
 
 describe('Header', () => {

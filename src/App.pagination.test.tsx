@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fetchCharacters } from './api/charactersApi';
 import App from './App';
-import { createAppStore } from './store/store';
+import { createAppStore } from './store';
 import { mockCharacterResults } from './test-utils/characters';
 
 vi.mock('./api/charactersApi', () => ({

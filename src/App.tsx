@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Outlet, useSearchParams } from 'react-router-dom';
-import { Header } from './components/Header/Header';
-import { Search } from './components/Search/Search';
-import { Results } from './components/Results/Results';
-import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
-import { NotFound } from './components/NotFound/NotFound';
-import { SelectedItemsFlyout } from './components/SelectedItemsFlyout/SelectedItemsFlyout';
+import { Header } from './components/Header';
+import { Search } from './components/Search';
+import { Results } from './components/Results';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { NotFound } from './components/NotFound';
+import { SelectedItemsFlyout } from './components/SelectedItemsFlyout';
 import { fetchCharacters } from './api/charactersApi';
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
 import { getAssetUrl } from './utils/assets';
@@ -26,7 +26,7 @@ const getCharacterId = (url: string) => {
 
 const allowedSearchParams = ['page', 'details'];
 
-export default function App() {
+const App = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = useState<CharacterResult[]>([]);
   const [searchTerm, setSearchTerm] = useLocalStorage(
@@ -38,17 +38,15 @@ export default function App() {
   const hasUnknownSearchParam = Array.from(searchParams.keys()).some(
     (key) => !allowedSearchParams.includes(key)
   );
-  const [totalItems, setTotalItems] = useState<number>(0);
-  const [hasNextPage, setHasNextPage] = useState<boolean>(false);
-  const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [shouldThrowResultsError, setShouldThrowResultsError] =
-    useState<boolean>(false);
+  const [totalItems, setTotalItems] = useState(0);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [hasPreviousPage, setHasPreviousPage] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
   const [hasResultsBoundaryError, setHasResultsBoundaryError] =
-    useState<boolean>(false);
-  const [resultsBoundaryKey, setResultsBoundaryKey] = useState<number>(0);
-  const [retryCount, setRetryCount] = useState<number>(0);
+    useState(false);
+  const [resultsBoundaryKey, setResultsBoundaryKey] = useState(0);
+  const [retryCount, setRetryCount] = useState(0);
 
   const updatePageInUrl = useCallback(
     (page: number, replace = false) => {
@@ -136,11 +134,10 @@ export default function App() {
   const handleSearch = (newSearchTerm: string) => {
     const isSameSearch = newSearchTerm === searchTerm && currentPage === 1;
 
-    if (isSameSearch && !shouldThrowResultsError && !hasResultsBoundaryError) {
+    if (isSameSearch && !hasResultsBoundaryError) {
       return;
     }
 
-    setShouldThrowResultsError(false);
     setHasResultsBoundaryError(false);
     setResultsBoundaryKey((key) => key + 1);
     setIsLoading(true);
@@ -154,16 +151,11 @@ export default function App() {
     }
   };
 
-  const handleErrorButtonClick = () => {
-    setShouldThrowResultsError(true);
-  };
-
   const handleResultsBoundaryError = () => {
     setHasResultsBoundaryError(true);
   };
 
   const handleResultsBoundaryReset = () => {
-    setShouldThrowResultsError(false);
     setHasResultsBoundaryError(false);
     setResultsBoundaryKey((key) => key + 1);
   };
@@ -203,16 +195,13 @@ export default function App() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-slate-100">
+    <main className="app-page">
       <Header />
       <div
-        className="min-h-[calc(100vh-96px)] space-y-5 bg-cover bg-center bg-fixed py-5"
+        className="min-h-[calc(100vh-74px)] space-y-4 bg-cover bg-center bg-fixed py-4"
         style={{ backgroundImage }}
       >
-        <Search
-          onSearch={handleSearch}
-          onErrorButtonClick={handleErrorButtonClick}
-        />
+        <Search onSearch={handleSearch} />
         <div
           className={`mx-auto grid w-full max-w-[1800px] grid-cols-1 gap-5 ${
             detailsId ? 'xl:grid-cols-[minmax(0,1fr)_380px]' : ''
@@ -232,7 +221,6 @@ export default function App() {
               hasPreviousPage={hasPreviousPage}
               isLoading={isLoading}
               errorMessage={errorMessage}
-              shouldThrowError={shouldThrowResultsError}
               onRetry={handleRetry}
               onPageChange={handlePageChange}
               onNextPage={handleNextPage}
@@ -248,4 +236,6 @@ export default function App() {
       </div>
     </main>
   );
-}
+};
+
+export default App;

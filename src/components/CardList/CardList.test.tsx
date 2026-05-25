@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { describe, expect, it, vi } from 'vitest';
 import { mockCharacterResults } from '../../test-utils/characters';
-import { createAppStore } from '../../store/store';
+import { createAppStore } from '../../store';
 import { CardList } from './CardList';
 
 describe('CardList', () => {

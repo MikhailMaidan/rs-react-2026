@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { fetchCharacterDetails } from '../../api/charactersApi';
-import { Loader } from '../Loader/Loader';
+import { Loader } from '../Loader';
 import type { Character } from '../../types/character';
 
 interface DetailsOutletContext {
   onClose: () => void;
 }
 
-export function DetailsPanel() {
+export const DetailsPanel = () => {
   const [searchParams] = useSearchParams();
   const { onClose } = useOutletContext<DetailsOutletContext>();
   const detailsId = searchParams.get('details');
   const [character, setCharacter] = useState<Character | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loadedDetailsId, setLoadedDetailsId] = useState<string>('');
-  const [failedDetailsId, setFailedDetailsId] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loadedDetailsId, setLoadedDetailsId] = useState('');
+  const [failedDetailsId, setFailedDetailsId] = useState('');
   const isLoading =
     Boolean(detailsId) &&
     loadedDetailsId !== detailsId &&
@@ -58,7 +58,7 @@ export function DetailsPanel() {
   }
 
   return (
-    <aside className="relative min-h-[420px] rounded-[14px] border border-yellow-400 bg-black/85 p-6 shadow-[0_0_30px_rgba(250,204,21,0.08)]">
+    <aside className="details-panel">
       {isLoading && <Loader />}
 
       <div className="flex items-start justify-between gap-4">
@@ -72,7 +72,7 @@ export function DetailsPanel() {
         </div>
         <button
           type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-md border border-yellow-400 bg-zinc-950/80 text-xl font-bold leading-none text-white transition hover:bg-yellow-400/10"
+          className="details-close-button"
           aria-label="Close details"
           onClick={onClose}
         >
@@ -107,4 +107,4 @@ export function DetailsPanel() {
       )}
     </aside>
   );
-}
+};

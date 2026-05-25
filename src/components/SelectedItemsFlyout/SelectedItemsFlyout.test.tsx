@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { describe, expect, it, vi } from 'vitest';
 import { toggleSelectedItem } from '../../store/selectedItemsSlice';
-import { createAppStore } from '../../store/store';
+import { createAppStore } from '../../store';
 import { mockCharacterResults } from '../../test-utils/characters';
 import { SelectedItemsFlyout } from './SelectedItemsFlyout';
 

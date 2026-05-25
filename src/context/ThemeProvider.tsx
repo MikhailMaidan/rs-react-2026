@@ -5,7 +5,7 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
@@ -25,4 +25,4 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       {children}
     </ThemeContext.Provider>
   );
-}
+};

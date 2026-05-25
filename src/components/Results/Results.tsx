@@ -1,7 +1,7 @@
-import { CardList } from '../CardList/CardList';
-import { ErrorButton } from '../ErrorButton/ErrorButton';
-import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
-import { Loader } from '../Loader/Loader';
+import { CardList } from '../CardList';
+import { ErrorButton } from '../ErrorButton';
+import { ErrorMessage } from '../ErrorMessage';
+import { Loader } from '../Loader';
 import { ITEMS_PER_PAGE } from '../../api/charactersApi';
 import { getAssetUrl } from '../../utils/assets';
 import type { CharacterResult } from '../../types/character';
@@ -15,7 +15,6 @@ interface ResultsProps {
   hasPreviousPage: boolean;
   isLoading: boolean;
   errorMessage: string;
-  shouldThrowError: boolean;
   onRetry: () => void;
   onPageChange: (page: number) => void;
   onNextPage: () => void;
@@ -26,7 +25,7 @@ interface ResultsProps {
 const menuIcon = getAssetUrl('menu-svgrepo-com.svg');
 const maxPageButtons = 9;
 
-export function Results({
+export const Results = ({
   items,
   searchTerm,
   currentPage,
@@ -35,13 +34,12 @@ export function Results({
   hasPreviousPage,
   isLoading,
   errorMessage,
-  shouldThrowError,
   onRetry,
   onPageChange,
   onNextPage,
   onPreviousPage,
   onItemSelect,
-}: ResultsProps) {
+}: ResultsProps) => {
   const subtitle = searchTerm
     ? `Showing results for "${searchTerm}"`
     : 'Showing results for all items';
@@ -51,69 +49,69 @@ export function Results({
   );
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
 
-  if (shouldThrowError) {
-    throw new Error('Test application error');
-  }
-
   return (
-    <section className="mx-auto w-full max-w-[1800px] px-6 pb-10 sm:px-9">
-      <div className="relative w-full rounded-[14px] border border-yellow-400 bg-black/85 p-6 shadow-[0_0_30px_rgba(250,204,21,0.08)] sm:p-8">
+    <section className="mx-auto w-full max-w-[1500px] px-4 pb-8 sm:px-6">
+      <div className="results-card">
         {isLoading && <Loader />}
 
         {errorMessage ? (
           <ErrorMessage message={errorMessage} onRetry={onRetry} />
         ) : (
           <>
-            <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <div className="flex items-center gap-4">
-                  <img src={menuIcon} alt="" className="icon-gold h-10 w-10" />
-                  <h2 className="text-[30px] font-bold leading-none text-white">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={menuIcon}
+                    alt=""
+                    aria-hidden="true"
+                    className="icon-gold h-6 w-6"
+                  />
+                  <h2 className="text-[22px] font-bold leading-none text-white">
                     Results
                   </h2>
                 </div>
-                <p className="mt-5 text-sm text-zinc-300">{subtitle}</p>
+                <p className="mt-2 text-xs text-zinc-300">{subtitle}</p>
               </div>
 
-              <div className="rounded-lg border border-yellow-400 bg-zinc-950/80 px-5 py-3 text-[24px] font-bold text-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.08)]">
-                Total: {totalItems} items
-              </div>
+              <div className="results-total">Total: {totalItems} items</div>
             </div>
 
             <CardList items={items} onItemSelect={onItemSelect} />
 
-            <div className="mt-7 grid gap-5 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
+            <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
               {totalPages > 0 && (
                 <>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <button
                       type="button"
-                      className="rounded-md border border-yellow-400 bg-zinc-950/80 px-5 py-3 font-semibold text-white transition hover:bg-yellow-400/10 disabled:cursor-not-allowed disabled:border-zinc-700 disabled:text-zinc-500 disabled:opacity-70"
-                      disabled={!hasPreviousPage}
+                      className="pagination-button"
+                      disabled={isLoading || !hasPreviousPage}
                       onClick={onPreviousPage}
                     >
                       Previous
                     </button>
                     <button
                       type="button"
-                      className="rounded-md border border-yellow-400 bg-zinc-950/80 px-5 py-3 font-semibold text-white transition hover:bg-yellow-400/10 disabled:cursor-not-allowed disabled:border-zinc-700 disabled:text-zinc-500 disabled:opacity-70"
-                      disabled={!hasNextPage}
+                      className="pagination-button"
+                      disabled={isLoading || !hasNextPage}
                       onClick={onNextPage}
                     >
                       Next
                     </button>
                   </div>
 
-                  <div className="flex flex-wrap justify-start gap-3 lg:justify-center">
+                  <div className="flex flex-wrap justify-start gap-2 lg:justify-center">
                     {pages.map((page) => (
                       <button
                         key={page}
                         type="button"
-                        className={`flex h-12 w-12 items-center justify-center rounded-md border font-bold transition ${
+                        className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border text-sm font-bold transition disabled:cursor-not-allowed disabled:border-zinc-700 disabled:text-zinc-500 disabled:opacity-70 ${
                           page === currentPage
                             ? 'border-yellow-400 bg-yellow-400 text-black shadow-[0_0_20px_rgba(250,204,21,0.24)]'
                             : 'border-yellow-400 bg-zinc-950/80 text-white hover:bg-yellow-400/10'
                         }`}
+                        disabled={isLoading}
                         onClick={() => onPageChange(page)}
                       >
                         {page}
@@ -132,4 +130,4 @@ export function Results({
       </div>
     </section>
   );
-}
+};
