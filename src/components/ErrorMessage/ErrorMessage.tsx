@@ -1,4 +1,4 @@
-import { ErrorButton } from '../ErrorButton/ErrorButton';
+import { ErrorButton } from '../ErrorButton';
 import { getAssetUrl } from '../../utils/assets';
 
 interface ErrorMessageProps {
@@ -14,24 +14,23 @@ const magnifierIcon = getAssetUrl('magnifier-svgrepo-com.svg');
 const updateIcon = getAssetUrl('update-svgrepo-com.svg');
 const wifiIcon = getAssetUrl('wifi-slash-svgrepo-com.svg');
 
-export function ErrorMessage({
+export const ErrorMessage = ({
   title = 'Unable to load results',
   message = 'Something went wrong while fetching the data. This might be a temporary issue. Please try again.',
   onRetry,
   showErrorButton = true,
-}: ErrorMessageProps) {
+}: ErrorMessageProps) => {
   const backgroundImage = `url("${errorBackground}")`;
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-[10px] border border-red-500 bg-black bg-cover bg-center px-6 py-14 text-center shadow-[0_0_28px_rgba(239,68,68,0.12)] sm:px-10"
+      className="error-message-card"
       style={{ backgroundImage }}
     >
       <div className="absolute inset-0 bg-black/45" />
       <div className="relative z-10 mx-auto max-w-[900px]">
         <img
           src={attentionIcon}
-          alt=""
           className="error-icon-red mx-auto block h-16 w-16"
         />
         <h2 className="mt-5 text-[28px] font-bold text-white">{title}</h2>
@@ -49,7 +48,6 @@ export function ErrorMessage({
             <li className="flex items-center gap-4">
               <img
                 src={updateIcon}
-                alt=""
                 className="error-icon-red h-6 w-6 shrink-0"
               />
               Click &quot;Try Again&quot; to reload the results
@@ -57,7 +55,6 @@ export function ErrorMessage({
             <li className="flex items-center gap-4">
               <img
                 src={magnifierIcon}
-                alt=""
                 className="error-icon-red h-6 w-6 shrink-0"
               />
               Try different search terms
@@ -65,7 +62,6 @@ export function ErrorMessage({
             <li className="flex items-center gap-4">
               <img
                 src={wifiIcon}
-                alt=""
                 className="error-icon-red h-6 w-6 shrink-0"
               />
               Check your internet connection
@@ -76,10 +72,13 @@ export function ErrorMessage({
         {onRetry && (
           <button
             type="button"
-            className="mx-auto mt-6 flex h-14 w-full max-w-[280px] items-center justify-center gap-3 rounded-lg border border-red-500 bg-zinc-950/80 text-[20px] font-bold text-white transition hover:bg-red-500/10"
+            className="error-retry-button"
             onClick={onRetry}
           >
-            <img src={updateIcon} alt="" className="error-icon-red h-6 w-6" />
+            <img
+              src={updateIcon}
+              className="error-icon-red h-6 w-6"
+            />
             Try Again
           </button>
         )}
@@ -102,4 +101,4 @@ export function ErrorMessage({
       </div>
     </div>
   );
-}
+};

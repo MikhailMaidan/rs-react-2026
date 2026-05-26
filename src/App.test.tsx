@@ -1,11 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fetchCharacterDetails, fetchCharacters } from './api/charactersApi';
 import App from './App';
-import { DetailsPanel } from './components/DetailsPanel/DetailsPanel';
+import { DetailsPanel } from './components/DetailsPanel';
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
+import { createAppStore } from './store';
 import {
   mockCharacterResults,
   mockCharactersResponse,
@@ -53,14 +55,16 @@ describe('App', () => {
 
   const renderApp = (initialEntries = ['/']) => {
     render(
-      <MemoryRouter initialEntries={initialEntries}>
-        <Routes>
-          <Route path="/" element={<App />}>
-            <Route index element={<DetailsPanel />} />
-          </Route>
-        </Routes>
-        <LocationDisplay />
-      </MemoryRouter>
+      <Provider store={createAppStore()}>
+        <MemoryRouter initialEntries={initialEntries}>
+          <Routes>
+            <Route path="/" element={<App />}>
+              <Route index element={<DetailsPanel />} />
+            </Route>
+          </Routes>
+          <LocationDisplay />
+        </MemoryRouter>
+      </Provider>
     );
   };
 
@@ -203,9 +207,7 @@ describe('App', () => {
 
       renderApp();
 
-      await user.click(
-        screen.getAllByRole('button', { name: /error button/i })[0]
-      );
+      await user.click(screen.getByRole('button', { name: /error button/i }));
 
       expect(
         await screen.findByText(/unable to render results/i)
@@ -219,9 +221,7 @@ describe('App', () => {
 
       renderApp();
 
-      await user.click(
-        screen.getAllByRole('button', { name: /error button/i })[0]
-      );
+      await user.click(screen.getByRole('button', { name: /error button/i }));
       expect(
         await screen.findByText(/unable to render results/i)
       ).toBeInTheDocument();
@@ -233,7 +233,7 @@ describe('App', () => {
       expect(await screen.findByText('No results found')).toBeInTheDocument();
     });
 
-    it('resets lower error button boundary after same empty search', async () => {
+    it('resets error boundary after same empty search', async () => {
       const user = userEvent.setup();
       vi.spyOn(console, 'error').mockImplementation(() => {});
       fetchCharactersMock.mockResolvedValue(emptyResult);
@@ -241,9 +241,7 @@ describe('App', () => {
       renderApp();
 
       await screen.findByText('No results found');
-      await user.click(
-        screen.getAllByRole('button', { name: /error button/i })[1]
-      );
+      await user.click(screen.getByRole('button', { name: /error button/i }));
       expect(
         await screen.findByText(/unable to render results/i)
       ).toBeInTheDocument();

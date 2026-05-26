@@ -1,9 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fetchCharacters } from './api/charactersApi';
 import App from './App';
+import { createAppStore } from './store';
 import { mockCharacterResults } from './test-utils/characters';
 
 vi.mock('./api/charactersApi', () => ({
@@ -43,21 +45,27 @@ describe('App pagination', () => {
   };
 
   const renderApp = (initialEntries = ['/']) => {
+    const store = createAppStore();
+
     render(
-      <MemoryRouter initialEntries={initialEntries}>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <App />
-                <LocationDisplay />
-              </>
-            }
-          />
-        </Routes>
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter initialEntries={initialEntries}>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <App />
+                  <LocationDisplay />
+                </>
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      </Provider>
     );
+
+    return store;
   };
 
   it('loads next page after next click', async () => {
@@ -114,5 +122,26 @@ describe('App pagination', () => {
     expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 2);
     expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
     expect(screen.getByTestId('location')).toHaveTextContent('?page=2');
+  });
+
+  it('keeps selected item after page navigation', async () => {
+    const user = userEvent.setup();
+    const store = renderApp();
+
+    expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+    await user.click(screen.getByRole('checkbox', { name: /select luke/i }));
+
+    expect(screen.getByText('Selected: 1')).toBeInTheDocument();
+    expect(store.getState().selectedItems.items).toEqual([
+      mockCharacterResults[0],
+    ]);
+
+    await user.click(screen.getByRole('button', { name: /next/i }));
+
+    expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
+    expect(screen.getByText('Selected: 1')).toBeInTheDocument();
+    expect(store.getState().selectedItems.items).toEqual([
+      mockCharacterResults[0],
+    ]);
   });
 });

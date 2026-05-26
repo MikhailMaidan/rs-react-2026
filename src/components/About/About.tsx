@@ -1,35 +1,33 @@
 import { Link } from 'react-router-dom';
-import { Header } from '../Header/Header';
+import { Header } from '../Header';
 import { getAssetUrl } from '../../utils/assets';
 
-export function About() {
+export const About = () => {
   const backgroundImage = `url("${getAssetUrl('background-image.png')}")`;
 
   return (
-    <main className="min-h-screen bg-black text-slate-100">
+    <main className="app-page">
       <Header />
       <section
-        className="min-h-[calc(100vh-96px)] bg-cover bg-center bg-fixed px-6 py-8 sm:px-9"
+        className="about-section"
         style={{ backgroundImage }}
       >
-        <div className="mx-auto grid max-w-[1800px] items-stretch gap-6 rounded-[14px] border border-yellow-400 bg-black/85 p-6 shadow-[0_0_30px_rgba(250,204,21,0.08)] lg:grid-cols-[minmax(320px,0.8fr)_minmax(0,1.2fr)] lg:p-8">
-          <div className="overflow-hidden rounded-[10px] border border-yellow-400/70 bg-zinc-950/80">
+        <div className="about-layout">
+          <div className="about-image-card">
             <img
               src={getAssetUrl('about_page.png')}
               alt="Future"
-              className="h-full min-h-[360px] w-full object-cover"
+              className="about-image"
             />
           </div>
 
-          <article className="rounded-[10px] border border-yellow-400/60 bg-zinc-950/80 p-6 text-[17px] leading-relaxed text-zinc-100 sm:p-8">
-            <h1 className="text-[32px] font-bold leading-tight text-white [text-shadow:0_0_8px_rgba(250,204,21,0.9),0_0_22px_rgba(239,68,68,0.55)]">
-              About the Creator
-            </h1>
-            <p className="mt-2 text-yellow-400">
+          <article className="about-article">
+            <h1 className="about-title">About the Creator</h1>
+            <p className="about-subtitle">
               a.k.a. Future Hokage - The Dark Lord of Half-Finished Projects
             </p>
 
-            <div className="mt-7 space-y-5">
+            <div className="about-content">
               <p>Greetings, brave visitor.</p>
               <p>
                 You have stumbled into the lair of Future - a shadowy figure
@@ -57,10 +55,8 @@ export function About() {
                 Truly, I am the Sith Lord of Delayed Gratification.
               </p>
 
-              <h2 className="pt-3 text-[24px] font-bold text-white">
-                Quick Facts
-              </h2>
-              <ul className="space-y-3">
+              <h2 className="about-small-title">Quick Facts</h2>
+              <ul className="about-list">
                 <li>
                   <span className="font-bold text-yellow-400">Superpower:</span>{' '}
                   Turning &quot;just a quick weekend tool&quot; into month-long
@@ -94,18 +90,18 @@ export function About() {
               </p>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="about-actions">
               <a
                 href="https://rs.school/courses/reactjs"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-12 items-center justify-center rounded-md border border-yellow-400 bg-zinc-950/80 px-6 font-bold text-white shadow-[0_0_20px_rgba(250,204,21,0.16)] transition hover:bg-yellow-400/10"
+                className="gold-outline-link"
               >
                 RS School React Course
               </a>
               <Link
                 to="/"
-                className="inline-flex h-12 items-center justify-center rounded-md border border-yellow-400 bg-zinc-950/80 px-6 font-bold text-white shadow-[0_0_20px_rgba(250,204,21,0.16)] transition hover:bg-yellow-400/10"
+                className="gold-outline-link"
               >
                 Main Menu
               </Link>
@@ -115,4 +111,4 @@ export function About() {
       </section>
     </main>
   );
-}
+};

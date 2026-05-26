@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ComponentProps } from 'react';
+import { Provider } from 'react-redux';
 import { describe, expect, it, vi } from 'vitest';
 import { mockCharacterResults } from '../../test-utils/characters';
+import { createAppStore } from '../../store';
 import { Results } from './Results';
 
 type ResultsProps = ComponentProps<typeof Results>;
@@ -16,7 +18,6 @@ const defaultProps: ResultsProps = {
   hasPreviousPage: false,
   isLoading: false,
   errorMessage: '',
-  shouldThrowError: false,
   onRetry: vi.fn(),
   onPageChange: vi.fn(),
   onNextPage: vi.fn(),
@@ -25,7 +26,11 @@ const defaultProps: ResultsProps = {
 };
 
 const renderResults = (props: Partial<ResultsProps> = {}) => {
-  render(<Results {...defaultProps} {...props} />);
+  render(
+    <Provider store={createAppStore()}>
+      <Results {...defaultProps} {...props} />
+    </Provider>
+  );
 };
 
 describe('Results', () => {
@@ -121,6 +126,20 @@ describe('Results', () => {
     await user.click(screen.getByRole('button', { name: /next/i }));
 
     expect(onPreviousPage).not.toHaveBeenCalled();
+    expect(onNextPage).not.toHaveBeenCalled();
+  });
+
+  it('keeps pagination visible and disabled while loading', async () => {
+    const user = userEvent.setup();
+    const onNextPage = vi.fn();
+
+    renderResults({ isLoading: true, onNextPage });
+
+    expect(screen.getByRole('button', { name: /next/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '2' })).toBeDisabled();
+
+    await user.click(screen.getByRole('button', { name: /next/i }));
+
     expect(onNextPage).not.toHaveBeenCalled();
   });
 });

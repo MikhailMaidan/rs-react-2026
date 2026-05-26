@@ -10,7 +10,7 @@ describe('Search', () => {
   });
 
   it('shows empty input when localStorage is empty', () => {
-    render(<Search onSearch={vi.fn()} onErrorButtonClick={vi.fn()} />);
+    render(<Search onSearch={vi.fn()} />);
 
     expect(screen.getByRole('searchbox')).toHaveValue('');
   });
@@ -18,7 +18,7 @@ describe('Search', () => {
   it('shows a previously saved search term from localStorage', () => {
     localStorage.setItem(SEARCH_TERM_STORAGE_KEY, 'vader');
 
-    render(<Search onSearch={vi.fn()} onErrorButtonClick={vi.fn()} />);
+    render(<Search onSearch={vi.fn()} />);
 
     expect(screen.getByRole('searchbox')).toHaveValue('vader');
   });
@@ -26,7 +26,7 @@ describe('Search', () => {
   it('submits the trimmed search term and keeps the trimmed value visible', async () => {
     const user = userEvent.setup();
     const onSearch = vi.fn();
-    render(<Search onSearch={onSearch} onErrorButtonClick={vi.fn()} />);
+    render(<Search onSearch={onSearch} />);
 
     await user.type(screen.getByRole('searchbox'), '  leia  ');
     await user.click(screen.getByRole('button', { name: /^search$/i }));
@@ -35,15 +35,11 @@ describe('Search', () => {
     expect(screen.getByRole('searchbox')).toHaveValue('leia');
   });
 
-  it('calls the supplied error handler from the error button', async () => {
-    const user = userEvent.setup();
-    const onErrorButtonClick = vi.fn();
-    render(
-      <Search onSearch={vi.fn()} onErrorButtonClick={onErrorButtonClick} />
-    );
+  it('does not render error button', () => {
+    render(<Search onSearch={vi.fn()} />);
 
-    await user.click(screen.getByRole('button', { name: /error button/i }));
-
-    expect(onErrorButtonClick).toHaveBeenCalledTimes(1);
+    expect(
+      screen.queryByRole('button', { name: /error button/i })
+    ).not.toBeInTheDocument();
   });
 });

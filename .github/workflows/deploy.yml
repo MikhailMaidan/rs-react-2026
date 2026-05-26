@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - hooks-and-routing
+      - app-state-management
   workflow_dispatch:
 
 permissions:

@@ -1,11 +1,20 @@
-export function Loader() {
+interface LoaderProps {
+  place?: 'center' | 'results';
+}
+
+export const Loader = ({ place = 'results' }: LoaderProps) => {
+  const wrapperClass =
+    place === 'center'
+      ? 'absolute inset-x-0 top-24 z-20 flex items-center justify-center'
+      : 'absolute inset-x-0 top-[54%] z-20 flex items-center justify-center';
+
   return (
     <div
       role="status"
       aria-label="Loading results"
-      className="absolute inset-0 z-20 flex items-center justify-center rounded-[10px] bg-black/70 backdrop-blur-sm"
+      className={wrapperClass}
     >
-      <div className="h-16 w-16 animate-spin rounded-full border-4 border-zinc-700 border-t-yellow-400" />
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-zinc-700 border-t-yellow-400" />
     </div>
   );
-}
+};

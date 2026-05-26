@@ -1,6 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { SEARCH_TERM_STORAGE_KEY } from '../../constants/localStorage';
-import { ErrorButton } from '../ErrorButton/ErrorButton';
 import { getAssetUrl } from '../../utils/assets';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 
@@ -8,12 +7,11 @@ const magnifierIcon = getAssetUrl('magnifier-svgrepo-com.svg');
 
 interface SearchProps {
   onSearch: (searchTerm: string) => void;
-  onErrorButtonClick: () => void;
 }
 
-export function Search({ onSearch, onErrorButtonClick }: SearchProps) {
+export const Search = ({ onSearch }: SearchProps) => {
   const [savedSearchTerm] = useLocalStorage(SEARCH_TERM_STORAGE_KEY, '');
-  const [searchTerm, setSearchTerm] = useState<string>(savedSearchTerm);
+  const [searchTerm, setSearchTerm] = useState(savedSearchTerm);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -28,48 +26,41 @@ export function Search({ onSearch, onErrorButtonClick }: SearchProps) {
   };
 
   return (
-    <section className="mx-auto max-w-[1800px] px-6 sm:px-9">
-      <div className="rounded-[10px] border border-yellow-400 bg-black/85 p-5 shadow-[0_0_24px_rgba(250,204,21,0.08)]">
-        <div className="rounded-[8px] border border-yellow-400/60 bg-zinc-950/70 px-6 py-6">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <div className="flex items-center gap-4">
-                <img
-                  src={magnifierIcon}
-                  alt=""
-                  className="icon-gold h-10 w-10"
-                />
-                <h1 className="text-[30px] font-bold leading-none text-white">
-                  Search
-                </h1>
-              </div>
-
-              <p className="mt-5 text-sm text-zinc-200">
-                Enter a term to search for items. Your last search is saved.
-              </p>
+    <section className="mx-auto max-w-[1500px] px-4 sm:px-6">
+      <div className="rounded-[8px] border border-yellow-400 bg-black/85 p-3 shadow-[0_0_18px_rgba(250,204,21,0.08)]">
+        <div className="rounded-[6px] border border-yellow-400/60 bg-zinc-950/70 px-4 py-4">
+          <div>
+            <div className="flex items-center gap-3">
+              <img
+                src={magnifierIcon}
+                className="icon-gold h-6 w-6"
+              />
+              <h1 className="text-[22px] font-bold leading-none text-white">
+                Search
+              </h1>
             </div>
 
-            <div className="w-full sm:w-[280px] sm:shrink-0">
-              <ErrorButton onTriggerError={onErrorButtonClick} />
-            </div>
+            <p className="mt-2 text-xs text-zinc-200">
+              Enter a term to search for items. Your last search is saved.
+            </p>
           </div>
 
           <form
-            className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end"
+            className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end"
             onSubmit={handleSubmit}
           >
             <input
               type="search"
               placeholder="Search items..."
               value={searchTerm}
-              className="h-[54px] min-w-0 flex-1 rounded-md border border-zinc-700 bg-zinc-900/80 px-5 text-base text-white outline-none transition placeholder:text-zinc-400 focus:border-yellow-400"
+              className="search-input"
               onChange={handleChange}
             />
-            <button
-              type="submit"
-              className="flex h-[54px] w-full items-center justify-center gap-3 rounded-md bg-yellow-400 font-bold text-black shadow-[0_0_24px_rgba(250,204,21,0.32)] transition hover:bg-yellow-300 sm:w-[280px] sm:shrink-0"
-            >
-              <img src={magnifierIcon} alt="" className="icon-black h-5 w-5" />
+            <button type="submit" className="search-button">
+              <img
+                src={magnifierIcon}
+                className="icon-black h-5 w-5"
+              />
               Search
             </button>
           </form>
@@ -77,4 +68,4 @@ export function Search({ onSearch, onErrorButtonClick }: SearchProps) {
       </div>
     </section>
   );
-}
+};

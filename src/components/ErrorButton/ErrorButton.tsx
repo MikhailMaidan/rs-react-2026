@@ -9,15 +9,15 @@ interface ErrorButtonProps {
 const attentionIcon = getAssetUrl('attention-svgrepo-com.svg');
 const errorBackground = getAssetUrl('error-component.png');
 
-export function ErrorButton({
+export const ErrorButton = ({
   onTriggerError,
   variant = 'default',
-}: ErrorButtonProps) {
-  const [hasError, setHasError] = useState<boolean>(false);
+}: ErrorButtonProps) => {
+  const [hasError, setHasError] = useState(false);
   const isErrorVariant = variant === 'error';
   const buttonClasses = isErrorVariant
-    ? 'mx-auto flex h-14 w-full items-center justify-center gap-4 rounded-lg border border-red-500 bg-black/90 bg-cover bg-center px-5 text-[20px] font-bold text-white shadow-[0_0_20px_rgba(239,68,68,0.16)] transition hover:bg-red-500/10'
-    : 'mx-auto flex h-14 w-full items-center justify-center gap-4 rounded-lg border border-yellow-400 bg-zinc-950/80 px-5 text-[20px] font-bold text-white shadow-[0_0_20px_rgba(250,204,21,0.16)] transition hover:bg-yellow-400/10';
+    ? 'error-button-danger'
+    : 'error-button-default';
 
   const handleClick = () => {
     if (onTriggerError) {
@@ -43,10 +43,9 @@ export function ErrorButton({
     >
       <img
         src={attentionIcon}
-        alt=""
-        className="icon-gold h-6 w-6 shrink-0"
+        className="icon-gold h-4 w-4 shrink-0"
       />
       <span className="whitespace-nowrap">Error Button</span>
     </button>
   );
-}
+};

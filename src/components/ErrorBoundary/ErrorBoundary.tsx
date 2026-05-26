@@ -1,5 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import { ErrorMessage } from '../ErrorMessage';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -36,7 +36,7 @@ export class ErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <section className="col-span-full w-full px-6 pb-10 sm:px-9">
+        <section className="col-span-full mx-auto w-full max-w-[1500px] px-4 pb-8 sm:px-6">
           <ErrorMessage
             title="Unable to render results"
             message="Something went wrong inside the application. The error was caught safely."
