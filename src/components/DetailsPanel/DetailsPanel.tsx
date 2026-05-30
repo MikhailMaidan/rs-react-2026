@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
-import { fetchCharacterDetails } from '../../api/charactersApi';
+import { skipToken } from '@reduxjs/toolkit/query';
+import { useGetCharacterDetailsQuery } from '../../api/charactersQueryApi';
 import { Loader } from '../Loader';
-import type { Character } from '../../types/character';
 
 interface DetailsOutletContext {
   onClose: () => void;
@@ -12,46 +11,12 @@ export const DetailsPanel = () => {
   const [searchParams] = useSearchParams();
   const { onClose } = useOutletContext<DetailsOutletContext>();
   const detailsId = searchParams.get('details');
-  const [character, setCharacter] = useState<Character | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [loadedDetailsId, setLoadedDetailsId] = useState('');
-  const [failedDetailsId, setFailedDetailsId] = useState('');
-  const isLoading =
-    Boolean(detailsId) &&
-    loadedDetailsId !== detailsId &&
-    failedDetailsId !== detailsId;
-
-  useEffect(() => {
-    if (!detailsId) {
-      return;
-    }
-
-    let isActualRequest = true;
-
-    fetchCharacterDetails(detailsId)
-      .then((data) => {
-        if (!isActualRequest) {
-          return;
-        }
-
-        setCharacter(data);
-        setLoadedDetailsId(detailsId);
-        setFailedDetailsId('');
-        setErrorMessage('');
-      })
-      .catch((error: Error) => {
-        if (!isActualRequest) {
-          return;
-        }
-
-        setErrorMessage(error.message);
-        setFailedDetailsId(detailsId);
-      });
-
-    return () => {
-      isActualRequest = false;
-    };
-  }, [detailsId]);
+  const {
+    data: character,
+    error,
+    isFetching,
+  } = useGetCharacterDetailsQuery(detailsId ?? skipToken);
+  const errorMessage = error ? 'Unable to load details. Please try again.' : '';
 
   if (!detailsId) {
     return null;
@@ -59,7 +24,7 @@ export const DetailsPanel = () => {
 
   return (
     <aside className="details-panel">
-      {isLoading && <Loader place="center" />}
+      {isFetching && <Loader place="center" />}
 
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -80,11 +45,10 @@ export const DetailsPanel = () => {
         </button>
       </div>
 
-      {errorMessage && failedDetailsId === detailsId ? (
+      {errorMessage ? (
         <p className="mt-8 text-red-400">{errorMessage}</p>
       ) : (
-        character &&
-        loadedDetailsId === detailsId && (
+        character && (
           <dl className="mt-8 space-y-5 text-[17px]">
             <div>
               <dt className="font-bold text-yellow-400">Birth year</dt>

@@ -6,7 +6,7 @@ import { Results } from './components/Results';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NotFound } from './components/NotFound';
 import { SelectedItemsFlyout } from './components/SelectedItemsFlyout';
-import { fetchCharacters } from './api/charactersApi';
+import { useGetCharactersQuery } from './api/charactersQueryApi';
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
 import { getAssetUrl } from './utils/assets';
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -28,7 +28,6 @@ const allowedSearchParams = ['page', 'details'];
 
 const App = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [items, setItems] = useState<CharacterResult[]>([]);
   const [searchTerm, setSearchTerm] = useLocalStorage(
     SEARCH_TERM_STORAGE_KEY,
     ''
@@ -38,15 +37,25 @@ const App = () => {
   const hasUnknownSearchParam = Array.from(searchParams.keys()).some(
     (key) => !allowedSearchParams.includes(key)
   );
-  const [totalItems, setTotalItems] = useState(0);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [hasPreviousPage, setHasPreviousPage] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('');
   const [hasResultsBoundaryError, setHasResultsBoundaryError] =
     useState(false);
   const [resultsBoundaryKey, setResultsBoundaryKey] = useState(0);
-  const [retryCount, setRetryCount] = useState(0);
+  const {
+    data: charactersData,
+    error: charactersError,
+    isFetching,
+    refetch: refetchCharacters,
+  } = useGetCharactersQuery(
+    { searchTerm, page: currentPage },
+    { skip: hasUnknownSearchParam }
+  );
+  const items = charactersData?.items ?? [];
+  const totalItems = charactersData?.totalItems ?? 0;
+  const hasNextPage = charactersData?.hasNextPage ?? false;
+  const hasPreviousPage = charactersData?.hasPreviousPage ?? false;
+  const errorMessage = charactersError
+    ? 'Unable to load results. Please try again.'
+    : '';
 
   const updatePageInUrl = useCallback(
     (page: number, replace = false) => {
@@ -71,56 +80,6 @@ const App = () => {
     setSearchParams(nextSearchParams);
   };
 
-  const loadCharacters = useCallback(
-    (currentSearchTerm: string, page: number, isActualRequest: () => boolean) => {
-      fetchCharacters(currentSearchTerm, page)
-        .then((data) => {
-          if (!isActualRequest()) {
-            return;
-          }
-
-          setItems(data.items);
-          setTotalItems(data.totalItems);
-          setHasNextPage(data.hasNextPage);
-          setHasPreviousPage(data.hasPreviousPage);
-          setIsLoading(false);
-        })
-        .catch((error: Error) => {
-          if (!isActualRequest()) {
-            return;
-          }
-
-          setErrorMessage(error.message);
-          setIsLoading(false);
-          setItems([]);
-          setTotalItems(0);
-          setHasNextPage(false);
-          setHasPreviousPage(false);
-        });
-    },
-    []
-  );
-
-  useEffect(() => {
-    if (hasUnknownSearchParam) {
-      return;
-    }
-
-    let isActualRequest = true;
-
-    loadCharacters(searchTerm, currentPage, () => isActualRequest);
-
-    return () => {
-      isActualRequest = false;
-    };
-  }, [
-    searchTerm,
-    currentPage,
-    retryCount,
-    loadCharacters,
-    hasUnknownSearchParam,
-  ]);
-
   useEffect(() => {
     if (hasUnknownSearchParam) {
       return;
@@ -140,14 +99,12 @@ const App = () => {
 
     setHasResultsBoundaryError(false);
     setResultsBoundaryKey((key) => key + 1);
-    setIsLoading(true);
-    setErrorMessage('');
 
     if (!isSameSearch) {
       setSearchTerm(newSearchTerm);
       updatePageInUrl(1);
     } else {
-      setRetryCount((currentRetryCount) => currentRetryCount + 1);
+      refetchCharacters();
     }
   };
 
@@ -161,9 +118,7 @@ const App = () => {
   };
 
   const handleRetry = () => {
-    setIsLoading(true);
-    setErrorMessage('');
-    setRetryCount((currentRetryCount) => currentRetryCount + 1);
+    refetchCharacters();
   };
 
   const handlePageChange = (page: number) => {
@@ -171,20 +126,14 @@ const App = () => {
       return;
     }
 
-    setIsLoading(true);
-    setErrorMessage('');
     updatePageInUrl(page);
   };
 
   const handleNextPage = () => {
-    setIsLoading(true);
-    setErrorMessage('');
     updatePageInUrl(currentPage + 1);
   };
 
   const handlePreviousPage = () => {
-    setIsLoading(true);
-    setErrorMessage('');
     updatePageInUrl(currentPage - 1);
   };
 
@@ -219,7 +168,7 @@ const App = () => {
               totalItems={totalItems}
               hasNextPage={hasNextPage}
               hasPreviousPage={hasPreviousPage}
-              isLoading={isLoading}
+              isLoading={isFetching}
               errorMessage={errorMessage}
               onRetry={handleRetry}
               onPageChange={handlePageChange}
