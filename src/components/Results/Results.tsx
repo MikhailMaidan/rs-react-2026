@@ -16,6 +16,7 @@ interface ResultsProps {
   isLoading: boolean;
   errorMessage: string;
   onRetry: () => void;
+  onRefreshCache: () => void;
   onPageChange: (page: number) => void;
   onNextPage: () => void;
   onPreviousPage: () => void;
@@ -35,6 +36,7 @@ export const Results = ({
   isLoading,
   errorMessage,
   onRetry,
+  onRefreshCache,
   onPageChange,
   onNextPage,
   onPreviousPage,
@@ -119,7 +121,15 @@ export const Results = ({
                 </>
               )}
 
-              <div className="lg:col-start-3 lg:justify-self-end">
+              <div className="flex flex-wrap gap-3 lg:col-start-3 lg:justify-self-end">
+                <button
+                  type="button"
+                  className="pagination-button"
+                  disabled={isLoading}
+                  onClick={onRefreshCache}
+                >
+                  Refresh
+                </button>
                 <ErrorButton />
               </div>
             </div>

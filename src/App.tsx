@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Outlet, useSearchParams } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Search } from './components/Search';
@@ -6,11 +7,15 @@ import { Results } from './components/Results';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NotFound } from './components/NotFound';
 import { SelectedItemsFlyout } from './components/SelectedItemsFlyout';
-import { useGetCharactersQuery } from './api/charactersQueryApi';
+import {
+  charactersQueryApi,
+  useGetCharactersQuery,
+} from './api/charactersQueryApi';
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
 import { getAssetUrl } from './utils/assets';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import type { CharacterResult } from './types/character';
+import type { AppDispatch } from './store';
 
 const getPageFromSearchParams = (searchParams: URLSearchParams) => {
   const page = Number(searchParams.get('page'));
@@ -27,6 +32,7 @@ const getCharacterId = (url: string) => {
 const allowedSearchParams = ['page', 'details'];
 
 const App = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useLocalStorage(
     SEARCH_TERM_STORAGE_KEY,
@@ -121,6 +127,10 @@ const App = () => {
     refetchCharacters();
   };
 
+  const handleRefreshCache = () => {
+    dispatch(charactersQueryApi.util.invalidateTags(['Characters', 'Character']));
+  };
+
   const handlePageChange = (page: number) => {
     if (page === currentPage) {
       return;
@@ -171,6 +181,7 @@ const App = () => {
               isLoading={isFetching}
               errorMessage={errorMessage}
               onRetry={handleRetry}
+              onRefreshCache={handleRefreshCache}
               onPageChange={handlePageChange}
               onNextPage={handleNextPage}
               onPreviousPage={handlePreviousPage}

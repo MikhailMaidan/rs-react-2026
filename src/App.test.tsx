@@ -33,6 +33,13 @@ const lukeResult = {
   hasPreviousPage: false,
 };
 
+const leiaResult = {
+  items: [mockCharacterResults[1]],
+  totalItems: 1,
+  hasNextPage: false,
+  hasPreviousPage: false,
+};
+
 describe('App', () => {
   const fetchCharactersMock = vi.mocked(fetchCharacters);
   const fetchCharacterDetailsMock = vi.mocked(fetchCharacterDetails);
@@ -250,6 +257,49 @@ describe('App', () => {
 
       expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 1);
       expect(await screen.findByText('No results found')).toBeInTheDocument();
+    });
+  });
+
+  describe('cache refresh', () => {
+    it('loads characters again after refresh click', async () => {
+      const user = userEvent.setup();
+
+      fetchCharactersMock
+        .mockResolvedValueOnce(lukeResult)
+        .mockResolvedValueOnce(leiaResult);
+
+      renderApp();
+
+      expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: /refresh/i }));
+
+      expect(fetchCharactersMock).toHaveBeenCalledTimes(2);
+      expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 1);
+      expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
+    });
+
+    it('refreshes opened details too', async () => {
+      const user = userEvent.setup();
+      const updatedCharacter = {
+        ...mockCharactersResponse[0],
+        height: '200',
+      };
+
+      fetchCharactersMock.mockResolvedValue(lukeResult);
+      fetchCharacterDetailsMock
+        .mockResolvedValueOnce(mockCharactersResponse[0])
+        .mockResolvedValueOnce(updatedCharacter);
+
+      renderApp();
+
+      await screen.findByText('Luke Skywalker');
+      await user.click(screen.getByText('Luke Skywalker'));
+
+      expect(await screen.findByText('172 cm')).toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: /refresh/i }));
+
+      expect(fetchCharacterDetailsMock).toHaveBeenCalledTimes(2);
+      expect(await screen.findByText('200 cm')).toBeInTheDocument();
     });
   });
 
