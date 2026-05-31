@@ -282,7 +282,7 @@ describe('App', () => {
       renderApp();
 
       expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
-      await user.click(screen.getByRole('button', { name: /refresh/i }));
+      await user.click(screen.getByRole('button', { name: /^refresh$/i }));
 
       expect(fetchCharactersMock).toHaveBeenCalledTimes(2);
       expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 1);
@@ -307,10 +307,37 @@ describe('App', () => {
       await user.click(screen.getByText('Luke Skywalker'));
 
       expect(await screen.findByText('172 cm')).toBeInTheDocument();
-      await user.click(screen.getByRole('button', { name: /refresh/i }));
+      await user.click(screen.getByRole('button', { name: /^refresh$/i }));
 
       expect(fetchCharacterDetailsMock).toHaveBeenCalledTimes(2);
       expect(await screen.findByText('200 cm')).toBeInTheDocument();
+    });
+
+    it('refreshes only opened details after refresh details click', async () => {
+      const user = userEvent.setup();
+      const updatedCharacter = {
+        ...mockCharactersResponse[0],
+        height: '201',
+      };
+
+      fetchCharactersMock.mockResolvedValue(lukeResult);
+      fetchCharacterDetailsMock
+        .mockResolvedValueOnce(mockCharactersResponse[0])
+        .mockResolvedValueOnce(updatedCharacter);
+
+      renderApp();
+
+      await screen.findByText('Luke Skywalker');
+      await user.click(screen.getByText('Luke Skywalker'));
+      expect(await screen.findByText('172 cm')).toBeInTheDocument();
+
+      await user.click(
+        screen.getByRole('button', { name: /refresh details/i })
+      );
+
+      expect(fetchCharactersMock).toHaveBeenCalledTimes(1);
+      expect(fetchCharacterDetailsMock).toHaveBeenCalledTimes(2);
+      expect(await screen.findByText('201 cm')).toBeInTheDocument();
     });
   });
 

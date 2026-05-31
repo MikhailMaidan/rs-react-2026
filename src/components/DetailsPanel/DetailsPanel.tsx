@@ -1,13 +1,19 @@
 import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { skipToken } from '@reduxjs/toolkit/query';
-import { useGetCharacterDetailsQuery } from '../../api/charactersQueryApi';
+import { useDispatch } from 'react-redux';
+import {
+  charactersQueryApi,
+  useGetCharacterDetailsQuery,
+} from '../../api/charactersQueryApi';
 import { Loader } from '../Loader';
+import type { AppDispatch } from '../../store';
 
 interface DetailsOutletContext {
   onClose: () => void;
 }
 
 export const DetailsPanel = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [searchParams] = useSearchParams();
   const { onClose } = useOutletContext<DetailsOutletContext>();
   const detailsId = searchParams.get('details');
@@ -26,6 +32,16 @@ export const DetailsPanel = () => {
     errorMessage = error.error;
   }
 
+  const handleRefreshDetails = () => {
+    if (detailsId) {
+      dispatch(
+        charactersQueryApi.util.invalidateTags([
+          { type: 'Character', id: detailsId },
+        ])
+      );
+    }
+  };
+
   if (!detailsId) {
     return null;
   }
@@ -43,14 +59,24 @@ export const DetailsPanel = () => {
             {character?.name ?? 'Loading...'}
           </h2>
         </div>
-        <button
-          type="button"
-          className="details-close-button"
-          aria-label="Close details"
-          onClick={onClose}
-        >
-          x
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="pagination-button"
+            disabled={isFetching}
+            onClick={handleRefreshDetails}
+          >
+            Refresh details
+          </button>
+          <button
+            type="button"
+            className="details-close-button"
+            aria-label="Close details"
+            onClick={onClose}
+          >
+            x
+          </button>
+        </div>
       </div>
 
       {errorMessage ? (
