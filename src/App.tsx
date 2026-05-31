@@ -59,9 +59,19 @@ const App = () => {
   const totalItems = charactersData?.totalItems ?? 0;
   const hasNextPage = charactersData?.hasNextPage ?? false;
   const hasPreviousPage = charactersData?.hasPreviousPage ?? false;
-  const errorMessage = charactersError
-    ? 'Unable to load results. Please try again.'
-    : '';
+  let errorMessage = '';
+
+  if (charactersError) {
+    errorMessage = 'Unable to load results. Please try again.';
+  }
+
+  if (
+    charactersError &&
+    'error' in charactersError &&
+    typeof charactersError.error === 'string'
+  ) {
+    errorMessage = charactersError.error;
+  }
 
   const updatePageInUrl = useCallback(
     (page: number, replace = false) => {
@@ -128,7 +138,9 @@ const App = () => {
   };
 
   const handleRefreshCache = () => {
-    dispatch(charactersQueryApi.util.invalidateTags(['Characters', 'Character']));
+    dispatch(
+      charactersQueryApi.util.invalidateTags(['Characters', 'Character'])
+    );
   };
 
   const handlePageChange = (page: number) => {

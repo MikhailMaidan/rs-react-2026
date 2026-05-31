@@ -16,7 +16,15 @@ export const DetailsPanel = () => {
     error,
     isFetching,
   } = useGetCharacterDetailsQuery(detailsId ?? skipToken);
-  const errorMessage = error ? 'Unable to load details. Please try again.' : '';
+  let errorMessage = '';
+
+  if (error) {
+    errorMessage = 'Unable to load details. Please try again.';
+  }
+
+  if (error && 'error' in error && typeof error.error === 'string') {
+    errorMessage = error.error;
+  }
 
   if (!detailsId) {
     return null;
