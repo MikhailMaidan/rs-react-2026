@@ -11,6 +11,7 @@ import { mockCharacterResults } from './test-utils/characters';
 vi.mock('./api/charactersApi', () => ({
   ITEMS_PER_PAGE: 10,
   fetchCharacters: vi.fn(),
+  fetchCharacterDetails: vi.fn(),
 }));
 
 const firstPageResult = {
@@ -96,7 +97,7 @@ describe('App pagination', () => {
     expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
   });
 
-  it('loads previous page after previous click', async () => {
+  it('shows cached previous page after previous click', async () => {
     const user = userEvent.setup();
 
     renderApp();
@@ -105,11 +106,32 @@ describe('App pagination', () => {
     await user.click(screen.getByRole('button', { name: /next/i }));
     expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
 
-    fetchCharactersMock.mockResolvedValueOnce(firstPageResult);
+    const callsBeforePreviousClick = fetchCharactersMock.mock.calls.length;
     await user.click(screen.getByRole('button', { name: /previous/i }));
 
-    expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 1);
+    expect(fetchCharactersMock).toHaveBeenCalledTimes(callsBeforePreviousClick);
     expect(screen.getByTestId('location')).toHaveTextContent('?page=1');
+    expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+  });
+
+  it('loads cached previous page again after refresh click', async () => {
+    const user = userEvent.setup();
+
+    renderApp();
+
+    expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /next/i }));
+    expect(await screen.findByText('Leia Organa')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /previous/i }));
+    expect(fetchCharactersMock).toHaveBeenCalledTimes(2);
+    expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
+
+    fetchCharactersMock.mockResolvedValueOnce(firstPageResult);
+    await user.click(screen.getByRole('button', { name: /^refresh$/i }));
+
+    expect(fetchCharactersMock).toHaveBeenCalledTimes(3);
+    expect(fetchCharactersMock).toHaveBeenLastCalledWith('', 1);
     expect(await screen.findByText('Luke Skywalker')).toBeInTheDocument();
   });
 

@@ -19,6 +19,7 @@ const defaultProps: ResultsProps = {
   isLoading: false,
   errorMessage: '',
   onRetry: vi.fn(),
+  onRefreshCache: vi.fn(),
   onPageChange: vi.fn(),
   onNextPage: vi.fn(),
   onPreviousPage: vi.fn(),
@@ -108,6 +109,17 @@ describe('Results', () => {
     await user.click(screen.getByRole('button', { name: '2' }));
 
     expect(onPageChange).toHaveBeenCalledWith(2);
+  });
+
+  it('calls refresh button', async () => {
+    const user = userEvent.setup();
+    const onRefreshCache = vi.fn();
+
+    renderResults({ onRefreshCache });
+
+    await user.click(screen.getByRole('button', { name: /refresh/i }));
+
+    expect(onRefreshCache).toHaveBeenCalledTimes(1);
   });
 
   it('does not call disabled pagination buttons', async () => {

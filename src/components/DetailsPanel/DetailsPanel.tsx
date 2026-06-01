@@ -1,57 +1,43 @@
-import { useEffect, useState } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
-import { fetchCharacterDetails } from '../../api/charactersApi';
+import { skipToken } from '@reduxjs/toolkit/query';
+import { useDispatch } from 'react-redux';
+import {
+  charactersQueryApi,
+  useGetCharacterDetailsQuery,
+} from '../../api/charactersQueryApi';
 import { Loader } from '../Loader';
-import type { Character } from '../../types/character';
+import type { AppDispatch } from '../../store';
 
 interface DetailsOutletContext {
   onClose: () => void;
 }
 
 export const DetailsPanel = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [searchParams] = useSearchParams();
   const { onClose } = useOutletContext<DetailsOutletContext>();
   const detailsId = searchParams.get('details');
-  const [character, setCharacter] = useState<Character | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [loadedDetailsId, setLoadedDetailsId] = useState('');
-  const [failedDetailsId, setFailedDetailsId] = useState('');
-  const isLoading =
-    Boolean(detailsId) &&
-    loadedDetailsId !== detailsId &&
-    failedDetailsId !== detailsId;
+  const {
+    data: character,
+    error,
+    isFetching,
+  } = useGetCharacterDetailsQuery(detailsId ?? skipToken);
+  const errorMessage =
+    error && 'error' in error && typeof error.error === 'string'
+      ? error.error
+      : error
+        ? 'Unable to load details. Please try again.'
+        : '';
 
-  useEffect(() => {
-    if (!detailsId) {
-      return;
+  const handleRefreshDetails = () => {
+    if (detailsId) {
+      dispatch(
+        charactersQueryApi.util.invalidateTags([
+          { type: 'Character', id: detailsId },
+        ])
+      );
     }
-
-    let isActualRequest = true;
-
-    fetchCharacterDetails(detailsId)
-      .then((data) => {
-        if (!isActualRequest) {
-          return;
-        }
-
-        setCharacter(data);
-        setLoadedDetailsId(detailsId);
-        setFailedDetailsId('');
-        setErrorMessage('');
-      })
-      .catch((error: Error) => {
-        if (!isActualRequest) {
-          return;
-        }
-
-        setErrorMessage(error.message);
-        setFailedDetailsId(detailsId);
-      });
-
-    return () => {
-      isActualRequest = false;
-    };
-  }, [detailsId]);
+  };
 
   if (!detailsId) {
     return null;
@@ -59,17 +45,20 @@ export const DetailsPanel = () => {
 
   return (
     <aside className="details-panel">
-      {isLoading && <Loader place="center" />}
+      {isFetching && <Loader place="center" />}
 
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold uppercase text-yellow-400">
-            Details
-          </p>
-          <h2 className="mt-2 text-[28px] font-bold leading-tight text-white">
-            {character?.name ?? 'Loading...'}
-          </h2>
-        </div>
+      <div className="flex items-center gap-2">
+        <p className="min-w-0 flex-1 text-sm font-semibold uppercase text-yellow-400">
+          Details
+        </p>
+        <button
+          type="button"
+          className="details-refresh-button"
+          disabled={isFetching}
+          onClick={handleRefreshDetails}
+        >
+          Refresh details
+        </button>
         <button
           type="button"
           className="details-close-button"
@@ -80,11 +69,14 @@ export const DetailsPanel = () => {
         </button>
       </div>
 
-      {errorMessage && failedDetailsId === detailsId ? (
+      <h2 className="mt-3 break-words text-[28px] font-bold leading-tight text-white">
+        {character?.name ?? 'Loading...'}
+      </h2>
+
+      {errorMessage ? (
         <p className="mt-8 text-red-400">{errorMessage}</p>
       ) : (
-        character &&
-        loadedDetailsId === detailsId && (
+        character && (
           <dl className="mt-8 space-y-5 text-[17px]">
             <div>
               <dt className="font-bold text-yellow-400">Birth year</dt>
