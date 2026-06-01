@@ -59,19 +59,14 @@ const App = () => {
   const totalItems = charactersData?.totalItems ?? 0;
   const hasNextPage = charactersData?.hasNextPage ?? false;
   const hasPreviousPage = charactersData?.hasPreviousPage ?? false;
-  let errorMessage = '';
-
-  if (charactersError) {
-    errorMessage = 'Unable to load results. Please try again.';
-  }
-
-  if (
+  const errorMessage =
     charactersError &&
     'error' in charactersError &&
     typeof charactersError.error === 'string'
-  ) {
-    errorMessage = charactersError.error;
-  }
+      ? charactersError.error
+      : charactersError
+        ? 'Unable to load results. Please try again.'
+        : '';
 
   const updatePageInUrl = useCallback(
     (page: number, replace = false) => {
