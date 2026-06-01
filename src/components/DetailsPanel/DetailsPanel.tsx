@@ -47,34 +47,31 @@ export const DetailsPanel = () => {
     <aside className="details-panel">
       {isFetching && <Loader place="center" />}
 
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold uppercase text-yellow-400">
-            Details
-          </p>
-          <h2 className="mt-2 text-[28px] font-bold leading-tight text-white">
-            {character?.name ?? 'Loading...'}
-          </h2>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="pagination-button"
-            disabled={isFetching}
-            onClick={handleRefreshDetails}
-          >
-            Refresh details
-          </button>
-          <button
-            type="button"
-            className="details-close-button"
-            aria-label="Close details"
-            onClick={onClose}
-          >
-            x
-          </button>
-        </div>
+      <div className="flex items-center gap-2">
+        <p className="min-w-0 flex-1 text-sm font-semibold uppercase text-yellow-400">
+          Details
+        </p>
+        <button
+          type="button"
+          className="details-refresh-button"
+          disabled={isFetching}
+          onClick={handleRefreshDetails}
+        >
+          Refresh details
+        </button>
+        <button
+          type="button"
+          className="details-close-button"
+          aria-label="Close details"
+          onClick={onClose}
+        >
+          x
+        </button>
       </div>
+
+      <h2 className="mt-3 break-words text-[28px] font-bold leading-tight text-white">
+        {character?.name ?? 'Loading...'}
+      </h2>
 
       {errorMessage ? (
         <p className="mt-8 text-red-400">{errorMessage}</p>

@@ -188,6 +188,31 @@
   background-color: rgb(250 204 21 / 0.1);
 }
 
+.details-refresh-button {
+  height: 2.5rem;
+  flex-shrink: 0;
+  padding: 0 1rem;
+  border: 1px solid #facc15;
+  border-radius: 0.375rem;
+  background-color: rgb(9 9 11 / 0.8);
+  color: #fff;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms;
+}
+
+.details-refresh-button:hover {
+  background-color: rgb(250 204 21 / 0.1);
+}
+
+.details-refresh-button:disabled {
+  cursor: not-allowed;
+  border-color: #3f3f46;
+  color: #71717a;
+  opacity: 0.7;
+}
+
 .error-button-default {
   display: flex;
   width: 100%;
@@ -428,7 +453,7 @@
 }
 
 .selected-flyout {
-  position: fixed;
+  position: sticky;
   right: 1rem;
   bottom: 1rem;
   left: 1rem;
@@ -556,6 +581,7 @@
 [data-theme='light'] .theme-button,
 [data-theme='light'] .details-panel,
 [data-theme='light'] .details-close-button,
+[data-theme='light'] .details-refresh-button,
 [data-theme='light'] .error-button-default,
 [data-theme='light'] .error-retry-button,
 [data-theme='light'] .results-card,
@@ -576,6 +602,7 @@
 [data-theme='light'] .header-link,
 [data-theme='light'] .theme-button,
 [data-theme='light'] .details-close-button,
+[data-theme='light'] .details-refresh-button,
 [data-theme='light'] .error-button-default,
 [data-theme='light'] .error-retry-button,
 [data-theme='light'] .pagination-button,

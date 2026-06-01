@@ -121,10 +121,10 @@ export const Results = ({
                 </>
               )}
 
-              <div className="flex flex-wrap gap-3 lg:col-start-3 lg:justify-self-end">
+              <div className="grid w-full grid-cols-2 gap-3 lg:col-start-3 lg:w-auto lg:min-w-[280px] lg:justify-self-end">
                 <button
                   type="button"
-                  className="pagination-button"
+                  className="pagination-button w-full"
                   disabled={isLoading}
                   onClick={onRefreshCache}
                 >
