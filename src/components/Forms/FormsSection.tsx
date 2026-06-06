@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Modal } from '../Modal';
+import { ReactHookBasicForm } from './ReactHookBasicForm';
 import { UncontrolledBasicForm } from './UncontrolledBasicForm';
 import type { RootState } from '../../store';
 import type { FormType } from '../../types/forms';
@@ -69,9 +70,7 @@ export const FormsSection = () => {
           {openedForm === 'Uncontrolled' ? (
             <UncontrolledBasicForm onSuccess={closeModal} />
           ) : (
-            <div className="rounded-md border border-yellow-400/60 bg-zinc-950/70 p-4 text-zinc-100">
-              React Hook Form implementation will use this same modal next.
-            </div>
+            <ReactHookBasicForm onSuccess={closeModal} />
           )}
         </Modal>
       )}

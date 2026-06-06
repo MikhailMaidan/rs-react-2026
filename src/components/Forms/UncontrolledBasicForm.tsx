@@ -1,60 +1,13 @@
 import { useState, type FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { addFormSubmission } from '../../store/formsSlice';
+import { basicFormSchema, genderOptions } from '../../utils/formValidation';
 import type { AppDispatch } from '../../store';
 import type { BasicFormValues } from '../../types/forms';
 
 interface UncontrolledBasicFormProps {
   onSuccess: () => void;
 }
-
-const getEmailError = (email: string) => {
-  const emailParts = email.split('@');
-
-  if (emailParts.length !== 2) {
-    return 'Email should contain one @ symbol.';
-  }
-
-  if (!emailParts[0] || !emailParts[1]) {
-    return 'Email local part and domain are required.';
-  }
-
-  if (!emailParts[1].includes('.')) {
-    return 'Email domain should contain a dot.';
-  }
-
-  return '';
-};
-
-const validateForm = (values: BasicFormValues) => {
-  const errors: string[] = [];
-
-  if (!values.name) {
-    errors.push('Name is required.');
-  } else if (values.name[0] !== values.name[0].toUpperCase()) {
-    errors.push('Name should start with an uppercase letter.');
-  }
-
-  if (!Number.isFinite(values.age) || values.age < 0) {
-    errors.push('Age should be a positive number.');
-  }
-
-  const emailError = getEmailError(values.email);
-
-  if (emailError) {
-    errors.push(emailError);
-  }
-
-  if (!values.gender) {
-    errors.push('Please select gender.');
-  }
-
-  if (!values.acceptedTerms) {
-    errors.push('Terms and Conditions should be accepted.');
-  }
-
-  return errors;
-};
 
 export const UncontrolledBasicForm = ({
   onSuccess,
@@ -73,14 +26,23 @@ export const UncontrolledBasicForm = ({
       gender: String(formData.get('gender') ?? ''),
       acceptedTerms: formData.get('terms') === 'on',
     };
-    const newErrors = validateForm(values);
+    const validatedForm = basicFormSchema.safeParse(values);
 
-    if (newErrors.length > 0) {
-      setErrors(newErrors);
+    if (!validatedForm.success) {
+      setErrors(
+        validatedForm.error.issues.map((issue) => {
+          return issue.message;
+        })
+      );
       return;
     }
 
-    dispatch(addFormSubmission({ formType: 'Uncontrolled', values }));
+    dispatch(
+      addFormSubmission({
+        formType: 'Uncontrolled',
+        values: validatedForm.data,
+      })
+    );
     event.currentTarget.reset();
     setErrors([]);
     onSuccess();
@@ -109,9 +71,11 @@ export const UncontrolledBasicForm = ({
           <option value="" disabled>
             Select gender
           </option>
-          <option value="female">Female</option>
-          <option value="male">Male</option>
-          <option value="other">Other</option>
+          {genderOptions.map((gender) => (
+            <option key={gender} value={gender}>
+              {gender}
+            </option>
+          ))}
         </select>
       </label>
 

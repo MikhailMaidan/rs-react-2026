@@ -237,6 +237,12 @@
   background-color: #fde047;
 }
 
+.forms-primary-button:disabled {
+  cursor: not-allowed;
+  background-color: #71717a;
+  color: #d4d4d8;
+}
+
 .forms-secondary-button {
   border: 1px solid #facc15;
   background-color: rgb(9 9 11 / 0.8);
@@ -309,6 +315,12 @@
 .forms-field input:focus,
 .forms-field select:focus {
   border-color: #facc15;
+}
+
+.forms-field-error {
+  color: #fecaca;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .forms-errors {
