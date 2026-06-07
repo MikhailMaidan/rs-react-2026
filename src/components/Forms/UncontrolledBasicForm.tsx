@@ -1,9 +1,14 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { addFormSubmission } from '../../store/formsSlice';
-import { basicFormSchema, genderOptions } from '../../utils/formValidation';
+import {
+  basicFormSchema,
+  genderOptions,
+  getPasswordStrength,
+  readImageAsBase64,
+  type BasicFormInput,
+} from '../../utils/formValidation';
 import type { AppDispatch } from '../../store';
-import type { BasicFormValues } from '../../types/forms';
 
 interface UncontrolledBasicFormProps {
   onSuccess: () => void;
@@ -14,16 +19,38 @@ export const UncontrolledBasicForm = ({
 }: UncontrolledBasicFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const [errors, setErrors] = useState<string[]>([]);
+  const [avatarPreview, setAvatarPreview] = useState('');
+  const [passwordStrength, setPasswordStrength] = useState('Weak');
+
+  const handleAvatarChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      setAvatarPreview('');
+      return;
+    }
+
+    const imageBase64 = await readImageAsBase64(file);
+
+    setAvatarPreview(imageBase64);
+  };
+
+  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPasswordStrength(getPasswordStrength(event.target.value));
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const values: BasicFormValues = {
+    const values: BasicFormInput = {
       name: String(formData.get('name') ?? '').trim(),
-      age: Number(formData.get('age')),
+      age: String(formData.get('age') ?? ''),
       email: String(formData.get('email') ?? '').trim(),
       gender: String(formData.get('gender') ?? ''),
+      password: String(formData.get('password') ?? ''),
+      passwordConfirm: String(formData.get('passwordConfirm') ?? ''),
+      avatar: avatarPreview,
       acceptedTerms: formData.get('terms') === 'on',
     };
     const validatedForm = basicFormSchema.safeParse(values);
@@ -44,6 +71,8 @@ export const UncontrolledBasicForm = ({
       })
     );
     event.currentTarget.reset();
+    setAvatarPreview('');
+    setPasswordStrength('Weak');
     setErrors([]);
     onSuccess();
   };
@@ -77,6 +106,41 @@ export const UncontrolledBasicForm = ({
             </option>
           ))}
         </select>
+      </label>
+
+      <label className="forms-field" htmlFor="uncontrolled-avatar">
+        <span>Profile image</span>
+        <input
+          id="uncontrolled-avatar"
+          name="avatar"
+          type="file"
+          accept="image/*"
+          onChange={handleAvatarChange}
+        />
+      </label>
+
+      {avatarPreview && (
+        <img className="forms-avatar-preview" src={avatarPreview} alt="" />
+      )}
+
+      <label className="forms-field" htmlFor="uncontrolled-password">
+        <span>Password</span>
+        <input
+          id="uncontrolled-password"
+          name="password"
+          type="password"
+          onChange={handlePasswordChange}
+        />
+        <span className="forms-help-text">Strength: {passwordStrength}</span>
+      </label>
+
+      <label className="forms-field" htmlFor="uncontrolled-password-confirm">
+        <span>Confirm password</span>
+        <input
+          id="uncontrolled-password-confirm"
+          name="passwordConfirm"
+          type="password"
+        />
       </label>
 
       <label

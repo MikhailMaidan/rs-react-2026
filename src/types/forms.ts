@@ -5,6 +5,9 @@ export interface BasicFormValues {
   age: number;
   email: string;
   gender: string;
+  password: string;
+  passwordConfirm: string;
+  avatar: string;
   acceptedTerms: boolean;
 }
 
