@@ -11,16 +11,23 @@ import {
 import type { AppDispatch } from '../../store';
 
 interface UncontrolledBasicFormProps {
+  countries: string[];
+  countriesError: string;
+  isLoadingCountries: boolean;
   onSuccess: () => void;
 }
 
 export const UncontrolledBasicForm = ({
+  countries,
+  countriesError,
+  isLoadingCountries,
   onSuccess,
 }: UncontrolledBasicFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const [errors, setErrors] = useState<string[]>([]);
   const [avatarPreview, setAvatarPreview] = useState('');
   const [passwordStrength, setPasswordStrength] = useState('Weak');
+  const hasCountries = countries.length > 0;
 
   const handleAvatarChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -48,6 +55,7 @@ export const UncontrolledBasicForm = ({
       age: String(formData.get('age') ?? ''),
       email: String(formData.get('email') ?? '').trim(),
       gender: String(formData.get('gender') ?? ''),
+      country: String(formData.get('country') ?? '').trim(),
       password: String(formData.get('password') ?? ''),
       passwordConfirm: String(formData.get('passwordConfirm') ?? ''),
       avatar: avatarPreview,
@@ -106,6 +114,21 @@ export const UncontrolledBasicForm = ({
             </option>
           ))}
         </select>
+      </label>
+
+      <label className="forms-field" htmlFor="uncontrolled-country">
+        <span>Country</span>
+        <input
+          id="uncontrolled-country"
+          name="country"
+          type="text"
+          list="countries-list"
+          disabled={isLoadingCountries && !hasCountries}
+          placeholder={isLoadingCountries ? 'Loading countries...' : 'Country'}
+        />
+        {countriesError && (
+          <span className="forms-field-error">{countriesError}</span>
+        )}
       </label>
 
       <label className="forms-field" htmlFor="uncontrolled-avatar">

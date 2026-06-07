@@ -14,12 +14,21 @@ import type { AppDispatch } from '../../store';
 import type { BasicFormValues } from '../../types/forms';
 
 interface ReactHookBasicFormProps {
+  countries: string[];
+  countriesError: string;
+  isLoadingCountries: boolean;
   onSuccess: () => void;
 }
 
-export const ReactHookBasicForm = ({ onSuccess }: ReactHookBasicFormProps) => {
+export const ReactHookBasicForm = ({
+  countries,
+  countriesError,
+  isLoadingCountries,
+  onSuccess,
+}: ReactHookBasicFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const [avatarPreview, setAvatarPreview] = useState('');
+  const hasCountries = countries.length > 0;
   const {
     control,
     formState: { errors, isValid },
@@ -32,6 +41,7 @@ export const ReactHookBasicForm = ({ onSuccess }: ReactHookBasicFormProps) => {
       name: '',
       email: '',
       gender: '',
+      country: '',
       password: '',
       passwordConfirm: '',
       avatar: '',
@@ -100,6 +110,24 @@ export const ReactHookBasicForm = ({ onSuccess }: ReactHookBasicFormProps) => {
         </select>
         {errors.gender && (
           <span className="forms-field-error">{errors.gender.message}</span>
+        )}
+      </label>
+
+      <label className="forms-field" htmlFor="rhf-country">
+        <span>Country</span>
+        <input
+          id="rhf-country"
+          type="text"
+          list="countries-list"
+          disabled={isLoadingCountries && !hasCountries}
+          placeholder={isLoadingCountries ? 'Loading countries...' : 'Country'}
+          {...register('country')}
+        />
+        {countriesError && (
+          <span className="forms-field-error">{countriesError}</span>
+        )}
+        {errors.country && (
+          <span className="forms-field-error">{errors.country.message}</span>
         )}
       </label>
 

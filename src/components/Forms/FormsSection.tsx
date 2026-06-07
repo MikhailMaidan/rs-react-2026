@@ -3,11 +3,13 @@ import { useSelector } from 'react-redux';
 import { Modal } from '../Modal';
 import { ReactHookBasicForm } from './ReactHookBasicForm';
 import { UncontrolledBasicForm } from './UncontrolledBasicForm';
+import { useCountries } from '../../hooks/useCountries';
 import type { RootState } from '../../store';
 import type { FormType } from '../../types/forms';
 
 export const FormsSection = () => {
   const [openedForm, setOpenedForm] = useState<FormType | null>(null);
+  const { countries, countriesError, isLoadingCountries } = useCountries();
   const submissions = useSelector(
     (state: RootState) => state.forms.submissions
   );
@@ -65,6 +67,9 @@ export const FormsSection = () => {
                 <p className="text-sm text-zinc-300">
                   Gender: {submission.gender}
                 </p>
+                <p className="text-sm text-zinc-300">
+                  Country: {submission.country}
+                </p>
                 {submission.avatar && (
                   <img
                     className="forms-card-avatar"
@@ -80,10 +85,25 @@ export const FormsSection = () => {
 
       {openedForm && (
         <Modal title={`${openedForm} profile form`} onClose={closeModal}>
+          <datalist id="countries-list">
+            {countries.map((country) => (
+              <option key={country} value={country} />
+            ))}
+          </datalist>
           {openedForm === 'Uncontrolled' ? (
-            <UncontrolledBasicForm onSuccess={closeModal} />
+            <UncontrolledBasicForm
+              countries={countries}
+              countriesError={countriesError}
+              isLoadingCountries={isLoadingCountries}
+              onSuccess={closeModal}
+            />
           ) : (
-            <ReactHookBasicForm onSuccess={closeModal} />
+            <ReactHookBasicForm
+              countries={countries}
+              countriesError={countriesError}
+              isLoadingCountries={isLoadingCountries}
+              onSuccess={closeModal}
+            />
           )}
         </Modal>
       )}

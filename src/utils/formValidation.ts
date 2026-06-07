@@ -92,6 +92,7 @@ export const basicFormSchema = z
       message: 'Email should have one @, local part, and domain with a dot.',
     }),
     gender: z.string().min(1, 'Please select gender.'),
+    country: z.string().trim().min(1, 'Country is required.'),
     password: z
       .string()
       .min(8, 'Password should be at least 8 characters.')
