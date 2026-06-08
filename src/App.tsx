@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Outlet, useSearchParams } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Search } from './components/Search';
+import { FormsSection } from './components/Forms';
 import { Results } from './components/Results';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NotFound } from './components/NotFound';
@@ -167,6 +168,7 @@ const App = () => {
         className="min-h-[calc(100vh-74px)] space-y-4 bg-cover bg-center bg-fixed py-4"
         style={{ backgroundImage }}
       >
+        <FormsSection />
         <Search onSearch={handleSearch} />
         <div
           className={`mx-auto grid w-full max-w-[1800px] grid-cols-1 gap-5 ${
