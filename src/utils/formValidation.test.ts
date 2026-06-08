@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   createBasicFormSchema,
   getPasswordStrength,
+  getPasswordChecks,
   validateImageFile,
 } from './formValidation';
 
@@ -30,22 +31,43 @@ describe('formValidation', () => {
     expect(schema.safeParse(validForm).success).toBe(false);
   });
 
-  it('rejects weak password', () => {
+  it('shows simple age type error', () => {
+    const schema = createBasicFormSchema(['Serbia']);
+    const result = schema.safeParse({
+      ...validForm,
+      age: '',
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0].message).toBe(
+        'Age has wrong data type.'
+      );
+    }
+  });
+
+  it('rejects mismatched password', () => {
     const schema = createBasicFormSchema(['Serbia']);
 
     expect(
       schema.safeParse({
         ...validForm,
-        password: 'password',
-        passwordConfirm: 'password',
+        passwordConfirm: 'Password2!',
       }).success
     ).toBe(false);
   });
 
-  it('shows password strength text', () => {
+  it('shows password strength checks', () => {
     expect(getPasswordStrength('abc')).toBe('Weak');
     expect(getPasswordStrength('Password1')).toBe('Medium');
     expect(getPasswordStrength('Password1!')).toBe('Strong');
+    expect(getPasswordChecks('Password1!')).toEqual({
+      hasLowercase: true,
+      hasNumber: true,
+      hasSpecial: true,
+      hasUppercase: true,
+    });
   });
 
   it('checks image file type and size', () => {

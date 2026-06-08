@@ -3,10 +3,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useDispatch } from 'react-redux';
 import { useForm, useWatch } from 'react-hook-form';
 import { addFormSubmission } from '../../store/formsSlice';
+import { PasswordStrength } from './PasswordStrength';
 import {
   createBasicFormSchema,
   genderOptions,
-  getPasswordStrength,
   readImageAsBase64,
   validateImageFile,
   type BasicFormInput,
@@ -29,6 +29,8 @@ export const ReactHookBasicForm = ({
 }: ReactHookBasicFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const [avatarPreview, setAvatarPreview] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const formSchema = useMemo(() => {
     return createBasicFormSchema(countries);
   }, [countries]);
@@ -55,6 +57,9 @@ export const ReactHookBasicForm = ({
     resolver: zodResolver(formSchema),
   });
   const password = String(useWatch({ control, name: 'password' }) ?? '');
+  const passwordConfirm = String(
+    useWatch({ control, name: 'passwordConfirm' }) ?? ''
+  );
 
   const handleAvatarChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -83,6 +88,8 @@ export const ReactHookBasicForm = ({
     dispatch(addFormSubmission({ formType: 'React Hook Form', values }));
     reset();
     setAvatarPreview('');
+    setShowPassword(false);
+    setShowPasswordConfirm(false);
     onSuccess();
   };
 
@@ -143,10 +150,23 @@ export const ReactHookBasicForm = ({
         )}
       </label>
 
-      <label className="forms-field" htmlFor="rhf-avatar">
-        <span>Profile image</span>
+      <div className="forms-field forms-image-field">
+        <span id="rhf-avatar-label">Profile image</span>
+        <label className="forms-image-upload" htmlFor="rhf-avatar">
+          {avatarPreview ? (
+            <img
+              className="forms-image-upload-preview"
+              src={avatarPreview}
+              alt=""
+            />
+          ) : (
+            <span>Choose your Image</span>
+          )}
+        </label>
         <input
           id="rhf-avatar"
+          aria-labelledby="rhf-avatar-label"
+          className="forms-file-input"
           type="file"
           accept="image/*"
           onChange={handleAvatarChange}
@@ -155,36 +175,68 @@ export const ReactHookBasicForm = ({
         {errors.avatar && (
           <span className="forms-field-error">{errors.avatar.message}</span>
         )}
-      </label>
+      </div>
 
-      {avatarPreview && (
-        <img className="forms-avatar-preview" src={avatarPreview} alt="" />
-      )}
+      <div className="forms-password-row">
+        <div className="forms-password-control">
+          <label className="forms-field" htmlFor="rhf-password">
+            <span>Password</span>
+            <input
+              id="rhf-password"
+              type={showPassword ? 'text' : 'password'}
+              {...register('password')}
+            />
+            {errors.password && (
+              <span className="forms-field-error">
+                {errors.password.message}
+              </span>
+            )}
+          </label>
+          <label className="forms-checkbox-label" htmlFor="rhf-show-password">
+            <input
+              id="rhf-show-password"
+              type="checkbox"
+              checked={showPassword}
+              onChange={(event) => setShowPassword(event.target.checked)}
+            />
+            <span>Show password</span>
+          </label>
+        </div>
+        <PasswordStrength password={password} />
+      </div>
 
-      <label className="forms-field" htmlFor="rhf-password">
-        <span>Password</span>
-        <input id="rhf-password" type="password" {...register('password')} />
-        <span className="forms-help-text">
-          Strength: {getPasswordStrength(password)}
-        </span>
-        {errors.password && (
-          <span className="forms-field-error">{errors.password.message}</span>
-        )}
-      </label>
-
-      <label className="forms-field" htmlFor="rhf-password-confirm">
-        <span>Confirm password</span>
-        <input
-          id="rhf-password-confirm"
-          type="password"
-          {...register('passwordConfirm')}
-        />
-        {errors.passwordConfirm && (
-          <span className="forms-field-error">
-            {errors.passwordConfirm.message}
-          </span>
-        )}
-      </label>
+      <div className="forms-password-row">
+        <div className="forms-password-control">
+          <label className="forms-field" htmlFor="rhf-password-confirm">
+            <span>Confirm password</span>
+            <input
+              id="rhf-password-confirm"
+              type={showPasswordConfirm ? 'text' : 'password'}
+              {...register('passwordConfirm')}
+            />
+            {errors.passwordConfirm && (
+              <span className="forms-field-error">
+                {errors.passwordConfirm.message}
+              </span>
+            )}
+          </label>
+          <label
+            className="forms-checkbox-label"
+            htmlFor="rhf-show-password-confirm"
+          >
+            <input
+              id="rhf-show-password-confirm"
+              type="checkbox"
+              checked={showPasswordConfirm}
+              onChange={(event) =>
+                setShowPasswordConfirm(event.target.checked)
+              }
+            />
+            <span>Show password</span>
+          </label>
+        </div>
+        <PasswordStrength password={passwordConfirm} />
+      </div>
 
       <label
         className="flex items-center gap-3 text-sm text-zinc-100 sm:col-span-2"

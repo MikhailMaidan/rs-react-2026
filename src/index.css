@@ -321,10 +321,72 @@
   border-color: #facc15;
 }
 
-.forms-help-text {
+.forms-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.forms-image-upload {
+  display: flex;
+  width: 100%;
+  max-width: 150px;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #3f3f46;
+  border-radius: 0.5rem;
+  background-color: rgb(24 24 27 / 0.9);
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+}
+
+.forms-image-upload:hover,
+.forms-image-upload:focus-within {
+  border-color: #facc15;
+}
+
+.forms-image-upload-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.forms-password-row {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 0.75rem;
+}
+
+.forms-password-control {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.forms-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #f4f4f5;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.forms-help-text,
+.forms-password-strength {
   color: #d4d4d8;
   font-size: 0.75rem;
   font-weight: 600;
+}
+
+.forms-password-strength {
+  display: grid;
+  gap: 0.2rem;
+  align-content: start;
 }
 
 .forms-field-error {
@@ -613,6 +675,14 @@
 }
 
 @media (min-width: 640px) {
+  .forms-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .forms-password-row {
+    grid-template-columns: minmax(0, 7fr) minmax(140px, 3fr);
+  }
+
   .selected-flyout {
     right: 1.5rem;
     left: 1.5rem;
@@ -727,6 +797,14 @@
 [data-theme='light'] .details-panel,
 [data-theme='light'] .details-close-button,
 [data-theme='light'] .details-refresh-button,
+[data-theme='light'] .forms-section,
+[data-theme='light'] .forms-secondary-button,
+[data-theme='light'] .forms-empty,
+[data-theme='light'] .forms-submission-card,
+[data-theme='light'] .forms-modal,
+[data-theme='light'] .forms-field input,
+[data-theme='light'] .forms-field select,
+[data-theme='light'] .forms-image-upload,
 [data-theme='light'] .error-button-default,
 [data-theme='light'] .error-retry-button,
 [data-theme='light'] .results-card,
@@ -748,6 +826,16 @@
 [data-theme='light'] .theme-button,
 [data-theme='light'] .details-close-button,
 [data-theme='light'] .details-refresh-button,
+[data-theme='light'] .forms-section,
+[data-theme='light'] .forms-secondary-button,
+[data-theme='light'] .forms-field,
+[data-theme='light'] .forms-checkbox-label,
+[data-theme='light'] .forms-empty,
+[data-theme='light'] .forms-submission-card,
+[data-theme='light'] .forms-modal,
+[data-theme='light'] .forms-field input,
+[data-theme='light'] .forms-field select,
+[data-theme='light'] .forms-image-upload,
 [data-theme='light'] .error-button-default,
 [data-theme='light'] .error-retry-button,
 [data-theme='light'] .pagination-button,
@@ -758,6 +846,24 @@
 
 [data-theme='light'] input {
   color: #18181b;
+}
+
+[data-theme='light'] .forms-help-text,
+[data-theme='light'] .forms-password-strength {
+  color: #3f3f46;
+}
+
+[data-theme='light'] .forms-field input::placeholder {
+  color: #71717a;
+}
+
+[data-theme='light'] .forms-field-error,
+[data-theme='light'] .forms-errors {
+  color: #b91c1c;
+}
+
+[data-theme='light'] .forms-errors {
+  background-color: rgb(254 242 242 / 0.9);
 }
 
 [data-theme='light'] header.bg-black {

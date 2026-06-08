@@ -36,6 +36,15 @@ export const getPasswordStrength = (password: string) => {
   return 'Strong';
 };
 
+export const getPasswordChecks = (password: string) => {
+  return {
+    hasNumber: /[0-9]/.test(password),
+    hasUppercase: /[A-Z]/.test(password),
+    hasLowercase: /[a-z]/.test(password),
+    hasSpecial: /[^A-Za-z0-9]/.test(password),
+  };
+};
+
 export const readImageAsBase64 = (file: File) => {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -87,20 +96,22 @@ export const basicFormSchema = z
       .string()
       .trim()
       .min(1, 'Name is required.')
-      .refine((name) => name[0] === name[0].toUpperCase(), {
+      .refine((name) => !name || name[0] === name[0].toUpperCase(), {
         message: 'Name should start with an uppercase letter.',
       }),
     age: z.preprocess(
       (value) => {
         if (typeof value === 'string' && value.trim() === '') {
-          return Number.NaN;
+          return 'wrong data type';
         }
 
-        return Number(value);
+        const numberValue = Number(value);
+
+        return Number.isNaN(numberValue) ? 'wrong data type' : numberValue;
       },
       z
-        .number()
-        .finite('Age should be a number.')
+        .number({ error: 'Age has wrong data type.' })
+        .finite('Age has wrong data type.')
         .min(0, 'Age should be a positive number.')
     ),
     email: z.string().trim().refine(validateEmail, {
@@ -110,19 +121,7 @@ export const basicFormSchema = z
     country: z.string().trim().min(1, 'Country is required.'),
     password: z
       .string()
-      .min(8, 'Password should be at least 8 characters.')
-      .refine((password) => /[A-Z]/.test(password), {
-        message: 'Password should contain uppercase letter.',
-      })
-      .refine((password) => /[a-z]/.test(password), {
-        message: 'Password should contain lowercase letter.',
-      })
-      .refine((password) => /[0-9]/.test(password), {
-        message: 'Password should contain number.',
-      })
-      .refine((password) => /[^A-Za-z0-9]/.test(password), {
-        message: 'Password should contain special character.',
-      }),
+      .min(1, 'Password is required.'),
     passwordConfirm: z.string().min(1, 'Please confirm password.'),
     avatar: z
       .string()

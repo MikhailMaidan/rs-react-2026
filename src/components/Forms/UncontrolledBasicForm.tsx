@@ -1,10 +1,10 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { addFormSubmission } from '../../store/formsSlice';
+import { PasswordStrength } from './PasswordStrength';
 import {
   createBasicFormSchema,
   genderOptions,
-  getPasswordStrength,
   readImageAsBase64,
   validateImageFile,
   type BasicFormInput,
@@ -27,7 +27,10 @@ export const UncontrolledBasicForm = ({
   const dispatch = useDispatch<AppDispatch>();
   const [errors, setErrors] = useState<string[]>([]);
   const [avatarPreview, setAvatarPreview] = useState('');
-  const [passwordStrength, setPasswordStrength] = useState('Weak');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const hasCountries = countries.length > 0;
 
   const handleAvatarChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +55,13 @@ export const UncontrolledBasicForm = ({
   };
 
   const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setPasswordStrength(getPasswordStrength(event.target.value));
+    setPassword(event.target.value);
+  };
+
+  const handlePasswordConfirmChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setPasswordConfirm(event.target.value);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -90,7 +99,10 @@ export const UncontrolledBasicForm = ({
     );
     event.currentTarget.reset();
     setAvatarPreview('');
-    setPasswordStrength('Weak');
+    setPassword('');
+    setPasswordConfirm('');
+    setShowPassword(false);
+    setShowPasswordConfirm(false);
     setErrors([]);
     onSuccess();
   };
@@ -141,40 +153,88 @@ export const UncontrolledBasicForm = ({
         )}
       </label>
 
-      <label className="forms-field" htmlFor="uncontrolled-avatar">
-        <span>Profile image</span>
+      <div className="forms-field forms-image-field">
+        <span id="uncontrolled-avatar-label">Profile image</span>
+        <label className="forms-image-upload" htmlFor="uncontrolled-avatar">
+          {avatarPreview ? (
+            <img
+              className="forms-image-upload-preview"
+              src={avatarPreview}
+              alt=""
+            />
+          ) : (
+            <span>Choose your Image</span>
+          )}
+        </label>
         <input
           id="uncontrolled-avatar"
+          aria-labelledby="uncontrolled-avatar-label"
+          className="forms-file-input"
           name="avatar"
           type="file"
           accept="image/*"
           onChange={handleAvatarChange}
         />
-      </label>
+      </div>
 
-      {avatarPreview && (
-        <img className="forms-avatar-preview" src={avatarPreview} alt="" />
-      )}
+      <div className="forms-password-row">
+        <div className="forms-password-control">
+          <label className="forms-field" htmlFor="uncontrolled-password">
+            <span>Password</span>
+            <input
+              id="uncontrolled-password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              onChange={handlePasswordChange}
+            />
+          </label>
+          <label
+            className="forms-checkbox-label"
+            htmlFor="uncontrolled-show-password"
+          >
+            <input
+              id="uncontrolled-show-password"
+              type="checkbox"
+              checked={showPassword}
+              onChange={(event) => setShowPassword(event.target.checked)}
+            />
+            <span>Show password</span>
+          </label>
+        </div>
+        <PasswordStrength password={password} />
+      </div>
 
-      <label className="forms-field" htmlFor="uncontrolled-password">
-        <span>Password</span>
-        <input
-          id="uncontrolled-password"
-          name="password"
-          type="password"
-          onChange={handlePasswordChange}
-        />
-        <span className="forms-help-text">Strength: {passwordStrength}</span>
-      </label>
-
-      <label className="forms-field" htmlFor="uncontrolled-password-confirm">
-        <span>Confirm password</span>
-        <input
-          id="uncontrolled-password-confirm"
-          name="passwordConfirm"
-          type="password"
-        />
-      </label>
+      <div className="forms-password-row">
+        <div className="forms-password-control">
+          <label
+            className="forms-field"
+            htmlFor="uncontrolled-password-confirm"
+          >
+            <span>Confirm password</span>
+            <input
+              id="uncontrolled-password-confirm"
+              name="passwordConfirm"
+              type={showPasswordConfirm ? 'text' : 'password'}
+              onChange={handlePasswordConfirmChange}
+            />
+          </label>
+          <label
+            className="forms-checkbox-label"
+            htmlFor="uncontrolled-show-password-confirm"
+          >
+            <input
+              id="uncontrolled-show-password-confirm"
+              type="checkbox"
+              checked={showPasswordConfirm}
+              onChange={(event) =>
+                setShowPasswordConfirm(event.target.checked)
+              }
+            />
+            <span>Show password</span>
+          </label>
+        </div>
+        <PasswordStrength password={passwordConfirm} />
+      </div>
 
       <label
         className="flex items-center gap-3 text-sm text-zinc-100 sm:col-span-2"
