@@ -1,13 +1,14 @@
-import { useState, type ChangeEvent } from 'react';
+import { useMemo, useState, type ChangeEvent } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDispatch } from 'react-redux';
 import { useForm, useWatch } from 'react-hook-form';
 import { addFormSubmission } from '../../store/formsSlice';
 import {
-  basicFormSchema,
+  createBasicFormSchema,
   genderOptions,
   getPasswordStrength,
   readImageAsBase64,
+  validateImageFile,
   type BasicFormInput,
 } from '../../utils/formValidation';
 import type { AppDispatch } from '../../store';
@@ -28,6 +29,9 @@ export const ReactHookBasicForm = ({
 }: ReactHookBasicFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const [avatarPreview, setAvatarPreview] = useState('');
+  const formSchema = useMemo(() => {
+    return createBasicFormSchema(countries);
+  }, [countries]);
   const hasCountries = countries.length > 0;
   const {
     control,
@@ -48,7 +52,7 @@ export const ReactHookBasicForm = ({
       acceptedTerms: false,
     },
     mode: 'onChange',
-    resolver: zodResolver(basicFormSchema),
+    resolver: zodResolver(formSchema),
   });
   const password = String(useWatch({ control, name: 'password' }) ?? '');
 
@@ -56,6 +60,14 @@ export const ReactHookBasicForm = ({
     const file = event.target.files?.[0];
 
     if (!file) {
+      setAvatarPreview('');
+      setValue('avatar', '', { shouldValidate: true });
+      return;
+    }
+
+    const imageError = validateImageFile(file);
+
+    if (imageError) {
       setAvatarPreview('');
       setValue('avatar', '', { shouldValidate: true });
       return;

@@ -1,18 +1,37 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Modal } from '../Modal';
 import { ReactHookBasicForm } from './ReactHookBasicForm';
 import { UncontrolledBasicForm } from './UncontrolledBasicForm';
 import { useCountries } from '../../hooks/useCountries';
-import type { RootState } from '../../store';
+import { clearRecentSubmission } from '../../store/formsSlice';
+import type { AppDispatch, RootState } from '../../store';
 import type { FormType } from '../../types/forms';
 
 export const FormsSection = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [openedForm, setOpenedForm] = useState<FormType | null>(null);
   const { countries, countriesError, isLoadingCountries } = useCountries();
   const submissions = useSelector(
     (state: RootState) => state.forms.submissions
   );
+  const recentSubmissionId = useSelector(
+    (state: RootState) => state.forms.recentSubmissionId
+  );
+
+  useEffect(() => {
+    if (!recentSubmissionId) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      dispatch(clearRecentSubmission());
+    }, 3500);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [dispatch, recentSubmissionId]);
 
   const closeModal = () => {
     setOpenedForm(null);
@@ -53,7 +72,14 @@ export const FormsSection = () => {
             </p>
           ) : (
             submissions.map((submission) => (
-              <article className="forms-submission-card" key={submission.id}>
+              <article
+                className={`forms-submission-card ${
+                  recentSubmissionId === submission.id
+                    ? 'forms-submission-card-new'
+                    : ''
+                }`}
+                key={submission.id}
+              >
                 <p className="text-xs font-bold uppercase text-yellow-300">
                   {submission.formType}
                 </p>

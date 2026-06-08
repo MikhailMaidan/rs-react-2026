@@ -50,6 +50,21 @@ export const readImageAsBase64 = (file: File) => {
   });
 };
 
+export const validateImageFile = (file: File) => {
+  const allowedTypes = ['image/png', 'image/jpeg'];
+  const maxImageSize = 1024 * 1024;
+
+  if (!allowedTypes.includes(file.type)) {
+    return 'Only png and jpeg images are allowed.';
+  }
+
+  if (file.size > maxImageSize) {
+    return 'Image should be smaller than 1MB.';
+  }
+
+  return '';
+};
+
 const validateEmail = (email: string) => {
   const emailParts = email.split('@');
 
@@ -109,7 +124,17 @@ export const basicFormSchema = z
         message: 'Password should contain special character.',
       }),
     passwordConfirm: z.string().min(1, 'Please confirm password.'),
-    avatar: z.string().min(1, 'Please upload profile image.'),
+    avatar: z
+      .string()
+      .min(1, 'Please upload profile image.')
+      .refine(
+        (avatar) =>
+          avatar.startsWith('data:image/png') ||
+          avatar.startsWith('data:image/jpeg'),
+        {
+          message: 'Only png and jpeg images are allowed.',
+        }
+      ),
     acceptedTerms: z.boolean().refine((value) => value, {
       message: 'Terms and Conditions should be accepted.',
     }),
@@ -118,5 +143,15 @@ export const basicFormSchema = z
     message: 'Passwords should match.',
     path: ['passwordConfirm'],
   });
+
+export const createBasicFormSchema = (countries: string[]) => {
+  return basicFormSchema.refine(
+    (values) => countries.length === 0 || countries.includes(values.country),
+    {
+      message: 'Please select country from list.',
+      path: ['country'],
+    }
+  );
+};
 
 export type BasicFormInput = z.input<typeof basicFormSchema>;

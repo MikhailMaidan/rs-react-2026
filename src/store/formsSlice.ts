@@ -2,10 +2,18 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { BasicFormValues, FormSubmission, FormType } from '../types/forms';
 
 interface FormsState {
+  countries: string[];
+  countriesError: string;
+  isLoadingCountries: boolean;
+  recentSubmissionId: string;
   submissions: FormSubmission[];
 }
 
 const initialState: FormsState = {
+  countries: [],
+  countriesError: '',
+  isLoadingCountries: false,
+  recentSubmissionId: '',
   submissions: [],
 };
 
@@ -25,10 +33,29 @@ export const formsSlice = createSlice({
       };
 
       state.submissions = [newSubmission, ...state.submissions];
+      state.recentSubmissionId = newSubmission.id;
+    },
+    clearRecentSubmission: (state) => {
+      state.recentSubmissionId = '';
+    },
+    setCountries: (state, action: PayloadAction<string[]>) => {
+      state.countries = action.payload;
+    },
+    setCountriesError: (state, action: PayloadAction<string>) => {
+      state.countriesError = action.payload;
+    },
+    setCountriesLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoadingCountries = action.payload;
     },
   },
 });
 
-export const { addFormSubmission } = formsSlice.actions;
+export const {
+  addFormSubmission,
+  clearRecentSubmission,
+  setCountries,
+  setCountriesError,
+  setCountriesLoading,
+} = formsSlice.actions;
 
 export const formsReducer = formsSlice.reducer;

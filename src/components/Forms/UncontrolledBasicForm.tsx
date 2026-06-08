@@ -2,10 +2,11 @@ import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { addFormSubmission } from '../../store/formsSlice';
 import {
-  basicFormSchema,
+  createBasicFormSchema,
   genderOptions,
   getPasswordStrength,
   readImageAsBase64,
+  validateImageFile,
   type BasicFormInput,
 } from '../../utils/formValidation';
 import type { AppDispatch } from '../../store';
@@ -37,6 +38,14 @@ export const UncontrolledBasicForm = ({
       return;
     }
 
+    const imageError = validateImageFile(file);
+
+    if (imageError) {
+      setAvatarPreview('');
+      setErrors([imageError]);
+      return;
+    }
+
     const imageBase64 = await readImageAsBase64(file);
 
     setAvatarPreview(imageBase64);
@@ -61,7 +70,8 @@ export const UncontrolledBasicForm = ({
       avatar: avatarPreview,
       acceptedTerms: formData.get('terms') === 'on',
     };
-    const validatedForm = basicFormSchema.safeParse(values);
+    const formSchema = createBasicFormSchema(countries);
+    const validatedForm = formSchema.safeParse(values);
 
     if (!validatedForm.success) {
       setErrors(

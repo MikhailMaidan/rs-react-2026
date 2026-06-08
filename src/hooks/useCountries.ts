@@ -1,4 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setCountries,
+  setCountriesError,
+  setCountriesLoading,
+} from '../store/formsSlice';
+import type { AppDispatch, RootState } from '../store';
 
 interface CountryApiItem {
   name: {
@@ -9,16 +16,25 @@ interface CountryApiItem {
 const countriesUrl = 'https://restcountries.com/v3.1/all?fields=name';
 
 export const useCountries = () => {
-  const [countries, setCountries] = useState<string[]>([]);
-  const [isLoadingCountries, setIsLoadingCountries] = useState(false);
-  const [countriesError, setCountriesError] = useState('');
+  const dispatch = useDispatch<AppDispatch>();
+  const countries = useSelector((state: RootState) => state.forms.countries);
+  const countriesError = useSelector(
+    (state: RootState) => state.forms.countriesError
+  );
+  const isLoadingCountries = useSelector(
+    (state: RootState) => state.forms.isLoadingCountries
+  );
 
   useEffect(() => {
     let isActive = true;
 
     const loadCountries = async () => {
-      setIsLoadingCountries(true);
-      setCountriesError('');
+      if (countries.length > 0) {
+        return;
+      }
+
+      dispatch(setCountriesLoading(true));
+      dispatch(setCountriesError(''));
 
       try {
         const response = await fetch(countriesUrl);
@@ -35,15 +51,15 @@ export const useCountries = () => {
           );
 
         if (isActive) {
-          setCountries(countryNames);
+          dispatch(setCountries(countryNames));
         }
       } catch {
         if (isActive) {
-          setCountriesError('Unable to load countries.');
+          dispatch(setCountriesError('Unable to load countries.'));
         }
       } finally {
         if (isActive) {
-          setIsLoadingCountries(false);
+          dispatch(setCountriesLoading(false));
         }
       }
     };
@@ -53,7 +69,7 @@ export const useCountries = () => {
     return () => {
       isActive = false;
     };
-  }, []);
+  }, [countries.length, dispatch]);
 
   return {
     countries,
