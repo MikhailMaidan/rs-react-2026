@@ -4,15 +4,15 @@
 
 ### Interaction A: Sort countries
 
-- **Commit duration**: 4 ms
+- **Commit duration**: ~4 ms
 - **Render duration**: 501.9 ms
-- **Screenshot**: ![Sort countries baseline](screenshots/baseline/sort_countries_by_population_ranked.png)
+- **Screenshot**: ![Sort countries baseline](screenshots/baseline/interactionA/sort_countries_by_population_ranked.png)
 
 ### Interaction B: Search countries
 
-- **Commit duration**: \_\_\_ ms
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![Search countries baseline](./screenshots/baseline/search-countries.png)
+- **Commit duration**: ~3s
+- **Render duration**: 224.9 ms
+- **Screenshot**: ![Baseline Search](screenshots/baseline/interactionB/united_ranked.png)
 
 ### Interaction C: Change year
 
