@@ -4,27 +4,27 @@
 
 ### Interaction A: Sort countries
 
-- **Commit duration**: ~4 ms
+- **Commit duration**: ~4 s
 - **Render duration**: 501.9 ms
-- **Screenshot**: ![Sort countries baseline](screenshots/baseline/interactionA/sort_countries_by_population_ranked.png)
+- **Screenshot**: ![Sort countries baseline](screenshots/baseline/interactionA/sort_countires_by_population_flamegraphs.png)
 
 ### Interaction B: Search countries
 
-- **Commit duration**: ~3s
+- **Commit duration**: ~3 s
 - **Render duration**: 224.9 ms
-- **Screenshot**: ![Baseline Search](screenshots/baseline/interactionB/united_ranked.png)
+- **Screenshot**: ![Baseline Search](screenshots/baseline/interactionB/united_flamegraphs.png)
 
 ### Interaction C: Change year
 
-- **Commit duration**: \_\_\_ ms
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![Change year baseline](./screenshots/baseline/change-year.png)
+- **Commit duration**: ~4.4 s
+- **Render duration**: 561 ms
+- **Screenshot**: ![Baseline Change Year](screenshots/baseline/interactionC/year_flamegraphs.png)
 
 ### Interaction D: Toggle column
 
-- **Commit duration**: \_\_\_ ms
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![Toggle column baseline](./screenshots/baseline/toggle-column.png)
+- **Commit duration**: ~2.1 s
+- **Render duration**: 578.2 ms
+- **Screenshot**: ![Baseline Toggle Column](screenshots/baseline/interactionD/column_flamegraphs.png)
 
 ---
 
