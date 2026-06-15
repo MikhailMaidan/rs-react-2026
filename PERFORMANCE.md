@@ -34,7 +34,7 @@
 - Used `useCallback` for search, year, sorting, column, and modal event handlers so memoized child components receive stable callback references.
 - Wrapped `CountryList`, `CountryCard`, `SearchBar`, `YearSelector`, and `ColumnModal` with `React.memo` to prevent re-renders when their props have not changed.
 - Replaced array-index keys with stable data keys: `country.id` for country cards and the column name for table rows. Existing year and modal lists already use stable value keys.
-- Virtualized the country list with a fixed-height scroll viewport, calculated row positions, and two-row overscan so only visible country cards and nearby rows are mounted.
+- Virtualized the country list with a fixed-height scroll viewport, calculated row positions, and two-row overscan so only visible country cards and nearby rows are mounted(custom virtualization without built-in libraries).
 
 ---
 
@@ -42,27 +42,27 @@
 
 ### Interaction A: Sort countries
 
-- **Commit duration**: \_\_\_ ms
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![Sort countries optimized](./screenshots/optimized/sort-countries.png)
+- **Commit duration**: ~2.6 ms
+- **Render duration**: 138.3 ms
+- **Screenshot**: ![Sort countries optimized](screenshots/optimized/interactionA/optimized_population_flamegraphs.png)
 
 ### Interaction B: Search countries
 
-- **Commit duration**: \_\_\_ ms
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![Search countries optimized](./screenshots/optimized/search-countries.png)
+- **Commit duration**: ~2.2 ms
+- **Render duration**: 55.5 ms
+- **Screenshot**: ![Search countries optimized](screenshots/optimized/interactionB/optimized_united_flamegraphs.png)
 
 ### Interaction C: Change year
 
-- **Commit duration**: \_\_\_ ms
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![Change year optimized](./screenshots/optimized/change-year.png)
+- **Commit duration**: ~3.1 ms
+- **Render duration**: 159.7 ms
+- **Screenshot**: ![Change year optimized](screenshots/optimized/interactionC/optimized_year_flamegraphs.png)
 
 ### Interaction D: Toggle column
 
-- **Commit duration**: \_\_\_ ms
-- **Render duration**: \_\_\_ ms
-- **Screenshot**: ![Toggle column optimized](./screenshots/optimized/toggle-column.png)
+- **Commit duration**: ~1.3 ms
+- **Render duration**: 17.2 ms
+- **Screenshot**: ![Toggle column optimized](screenshots/optimized/interactionD/optimized_column_flamegraphs.png)
 
 ---
 
@@ -70,8 +70,8 @@
 
 | Interaction      | Baseline (ms) | Optimized (ms) | Improvement |
 | ---------------- | ------------- | -------------- | ----------- |
-| Sort countries   |               |                |             |
-| Search countries |               |                |             |
-| Change year      |               |                |             |
-| Toggle column    |               |                |             |
-| **Average**      | \*\* \*\*     | \*\* \*\*      | ** %**      |
+| Sort countries   | 501.9         | 138.3          | **72.4%**   |
+| Search countries | 224.9         | 55.5           | **75.3%**   |
+| Change year      | 561           | 159.7          | **71.5%**   |
+| Toggle column    | 578.2         | 17.2           | **97.0%**   |
+| **Average**      | **466.5**     | **92.7**       | **80.1%**   |
