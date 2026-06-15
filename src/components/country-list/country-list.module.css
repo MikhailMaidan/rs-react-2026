@@ -1,0 +1,18 @@
+.countryList {
+  overflow-y: auto;
+  position: relative;
+  contain: strict;
+}
+
+.virtualContent {
+  position: relative;
+  width: 100%;
+}
+
+.virtualRow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 16px 16px;
+}
