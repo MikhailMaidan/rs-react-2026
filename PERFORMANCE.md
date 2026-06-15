@@ -30,14 +30,9 @@
 
 ## 2. Optimization Changes
 
-Describe here **what** you optimized and **why**.  
-Example:
-
-- Added `useMemo` for filtered and sorted country list
-- Wrapped `CountryRow` component with `React.memo`
-- Used `useCallback` for event handlers (`handleSort`, `handleSearch`, etc.)
-- Added proper `key` props to all list items
-- Implemented virtualization using `react-window` for the countries table
+- Added `useMemo` for available years and columns, the filtered and sorted country list, card year metrics, and table year data so these computed values are recalculated only when their inputs change.
+- Used `useCallback` for search, year, sorting, column, and modal event handlers so memoized child components receive stable callback references.
+- Wrapped `CountryList`, `CountryCard`, `SearchBar`, `YearSelector`, and `ColumnModal` with `React.memo` to prevent re-renders when their props have not changed.
 
 ---
 
