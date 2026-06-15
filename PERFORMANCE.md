@@ -33,6 +33,8 @@
 - Added `useMemo` for available years and columns, the filtered and sorted country list, card year metrics, and table year data so these computed values are recalculated only when their inputs change.
 - Used `useCallback` for search, year, sorting, column, and modal event handlers so memoized child components receive stable callback references.
 - Wrapped `CountryList`, `CountryCard`, `SearchBar`, `YearSelector`, and `ColumnModal` with `React.memo` to prevent re-renders when their props have not changed.
+- Replaced array-index keys with stable data keys: `country.id` for country cards and the column name for table rows. Existing year and modal lists already use stable value keys.
+- Virtualized the country list with a fixed-height scroll viewport, calculated row positions, and two-row overscan so only visible country cards and nearby rows are mounted.
 
 ---
 
