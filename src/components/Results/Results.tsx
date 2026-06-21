@@ -1,3 +1,5 @@
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { CardList } from '../CardList';
 import { ErrorButton } from '../ErrorButton';
 import { ErrorMessage } from '../ErrorMessage';
@@ -42,9 +44,10 @@ export const Results = ({
   onPreviousPage,
   onItemSelect,
 }: ResultsProps) => {
+  const t = useTranslations('Results');
   const subtitle = searchTerm
-    ? `Showing results for "${searchTerm}"`
-    : 'Showing results for all items';
+    ? t('showingFor', { term: searchTerm })
+    : t('showingAll');
   const totalPages = Math.min(
     maxPageButtons,
     Math.ceil(totalItems / ITEMS_PER_PAGE)
@@ -63,18 +66,24 @@ export const Results = ({
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <div className="flex items-center gap-3">
-                  <img
+                  <Image
                     src={menuIcon}
+                    alt=""
+                    width={24}
+                    height={24}
+                    unoptimized
                     className="icon-gold h-6 w-6"
                   />
                   <h2 className="text-[22px] font-bold leading-none text-white">
-                    Results
+                    {t('title')}
                   </h2>
                 </div>
                 <p className="mt-2 text-xs text-zinc-300">{subtitle}</p>
               </div>
 
-              <div className="results-total">Total: {totalItems} items</div>
+              <div className="results-total">
+                {t('total', { count: totalItems })}
+              </div>
             </div>
 
             <CardList items={items} onItemSelect={onItemSelect} />
@@ -89,7 +98,7 @@ export const Results = ({
                       disabled={isLoading || !hasPreviousPage}
                       onClick={onPreviousPage}
                     >
-                      Previous
+                      {t('previous')}
                     </button>
                     <button
                       type="button"
@@ -97,7 +106,7 @@ export const Results = ({
                       disabled={isLoading || !hasNextPage}
                       onClick={onNextPage}
                     >
-                      Next
+                      {t('next')}
                     </button>
                   </div>
 
@@ -128,7 +137,7 @@ export const Results = ({
                   disabled={isLoading}
                   onClick={onRefreshCache}
                 >
-                  Refresh
+                  {t('refresh')}
                 </button>
                 <ErrorButton />
               </div>

@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SEARCH_TERM_STORAGE_KEY } from '../../constants/localStorage';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { Search } from './Search';
 
 describe('Search', () => {
@@ -10,7 +11,7 @@ describe('Search', () => {
   });
 
   it('shows empty input when localStorage is empty', () => {
-    render(<Search onSearch={vi.fn()} />);
+    renderWithIntl(<Search onSearch={vi.fn()} />);
 
     expect(screen.getByRole('searchbox')).toHaveValue('');
   });
@@ -18,7 +19,7 @@ describe('Search', () => {
   it('shows a previously saved search term from localStorage', () => {
     localStorage.setItem(SEARCH_TERM_STORAGE_KEY, 'vader');
 
-    render(<Search onSearch={vi.fn()} />);
+    renderWithIntl(<Search onSearch={vi.fn()} />);
 
     expect(screen.getByRole('searchbox')).toHaveValue('vader');
   });
@@ -26,7 +27,7 @@ describe('Search', () => {
   it('submits the trimmed search term and keeps the trimmed value visible', async () => {
     const user = userEvent.setup();
     const onSearch = vi.fn();
-    render(<Search onSearch={onSearch} />);
+    renderWithIntl(<Search onSearch={onSearch} />);
 
     await user.type(screen.getByRole('searchbox'), '  leia  ');
     await user.click(screen.getByRole('button', { name: /^search$/i }));
@@ -36,7 +37,7 @@ describe('Search', () => {
   });
 
   it('does not render error button', () => {
-    render(<Search onSearch={vi.fn()} />);
+    renderWithIntl(<Search onSearch={vi.fn()} />);
 
     expect(
       screen.queryByRole('button', { name: /error button/i })

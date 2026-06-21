@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -11,6 +11,7 @@ import {
   setMockUrl,
   useMockSearch,
 } from './test-utils/nextNavigationMock';
+import { renderWithIntl } from './test-utils/renderWithIntl';
 
 vi.mock('./api/charactersApi', () => ({
   ITEMS_PER_PAGE: 10,
@@ -22,9 +23,21 @@ vi.mock('next/navigation', async () => {
   const navigationMock = await import('./test-utils/nextNavigationMock');
 
   return {
+    useSearchParams: navigationMock.useMockSearchParams,
+  };
+});
+
+vi.mock('./i18n/navigation', async () => {
+  const actual =
+    await vi.importActual<typeof import('./i18n/navigation')>(
+      './i18n/navigation'
+    );
+  const navigationMock = await import('./test-utils/nextNavigationMock');
+
+  return {
+    ...actual,
     useRouter: () => navigationMock.routerMock,
     usePathname: navigationMock.useMockPathname,
-    useSearchParams: navigationMock.useMockSearchParams,
   };
 });
 
@@ -64,7 +77,7 @@ describe('App pagination', () => {
     const store = createAppStore();
     setMockUrl(initialEntries[0]);
 
-    render(
+    renderWithIntl(
       <Provider store={store}>
         <App />
         <LocationDisplay />

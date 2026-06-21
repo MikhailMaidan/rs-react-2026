@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { describe, expect, it, vi } from 'vitest';
 import { mockCharacterResults } from '../../test-utils/characters';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { createAppStore } from '../../store';
 import { Card } from './Card';
 
@@ -10,7 +11,7 @@ describe('Card', () => {
   const renderCard = (onSelect = vi.fn()) => {
     const store = createAppStore();
 
-    render(
+    renderWithIntl(
       <Provider store={store}>
         <table>
           <tbody>

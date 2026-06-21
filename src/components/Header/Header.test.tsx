@@ -1,12 +1,39 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '../../context';
+import { resetMockNavigation } from '../../test-utils/nextNavigationMock';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { Header } from './Header';
 
+vi.mock('next/navigation', async () => {
+  const navigationMock = await import('../../test-utils/nextNavigationMock');
+
+  return {
+    useSearchParams: navigationMock.useMockSearchParams,
+  };
+});
+
+vi.mock('../../i18n/navigation', async () => {
+  const actual = await vi.importActual<typeof import('../../i18n/navigation')>(
+    '../../i18n/navigation'
+  );
+  const navigationMock = await import('../../test-utils/nextNavigationMock');
+
+  return {
+    ...actual,
+    useRouter: () => navigationMock.routerMock,
+    usePathname: navigationMock.useMockPathname,
+  };
+});
+
 describe('Header', () => {
+  beforeEach(() => {
+    resetMockNavigation();
+  });
+
   const renderHeader = () => {
-    render(
+    renderWithIntl(
       <ThemeProvider>
         <Header />
       </ThemeProvider>
@@ -19,15 +46,15 @@ describe('Header', () => {
     expect(screen.getByRole('img', { name: 'Starforge' })).toBeInTheDocument();
     expect(screen.getByLabelText(/go to main page/i)).toHaveAttribute(
       'href',
-      '/'
+      '/en'
     );
     expect(screen.getByRole('link', { name: /plug/i })).toHaveAttribute(
       'href',
-      '/plug'
+      '/en/plug'
     );
     expect(screen.getByRole('link', { name: /about/i })).toHaveAttribute(
       'href',
-      '/about'
+      '/en/about'
     );
   });
 

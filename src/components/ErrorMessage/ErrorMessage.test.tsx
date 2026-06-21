@@ -1,11 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { ErrorMessage } from './ErrorMessage';
 
 describe('ErrorMessage', () => {
   it('renders default error text', () => {
-    render(<ErrorMessage showErrorButton={false} />);
+    renderWithIntl(<ErrorMessage showErrorButton={false} />);
 
     expect(
       screen.getByRole('heading', { name: /unable to load results/i })
@@ -17,7 +18,7 @@ describe('ErrorMessage', () => {
     const user = userEvent.setup();
     const onRetry = vi.fn();
 
-    render(
+    renderWithIntl(
       <ErrorMessage
         message="Test error"
         onRetry={onRetry}

@@ -1,11 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { ErrorButton } from './ErrorButton';
 
 describe('ErrorButton', () => {
   it('renders error button', () => {
-    render(<ErrorButton />);
+    renderWithIntl(<ErrorButton />);
 
     expect(
       screen.getByRole('button', { name: /error button/i })
@@ -16,7 +17,7 @@ describe('ErrorButton', () => {
     const user = userEvent.setup();
     const onTriggerError = vi.fn();
 
-    render(<ErrorButton onTriggerError={onTriggerError} />);
+    renderWithIntl(<ErrorButton onTriggerError={onTriggerError} />);
 
     await user.click(screen.getByRole('button', { name: /error button/i }));
 

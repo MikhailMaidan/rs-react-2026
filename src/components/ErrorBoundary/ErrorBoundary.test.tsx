@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { ErrorButton } from '../ErrorButton';
 import { ErrorBoundary } from './ErrorBoundary';
 
@@ -22,7 +23,7 @@ describe('ErrorBoundary', () => {
     const user = userEvent.setup();
     const onReset = vi.fn();
 
-    render(
+    renderWithIntl(
       <ErrorBoundary onReset={onReset}>
         <ThrowingChild />
       </ErrorBoundary>
@@ -40,7 +41,7 @@ describe('ErrorBoundary', () => {
   it('shows fallback UI after error button click', async () => {
     const user = userEvent.setup();
 
-    render(
+    renderWithIntl(
       <ErrorBoundary>
         <ErrorButton />
       </ErrorBoundary>

@@ -1,12 +1,8 @@
-import { Suspense } from 'react';
-import App from '../App';
+import { redirect } from 'next/navigation';
+import { routing } from '../i18n/routing';
 
 const HomePage = () => {
-  return (
-    <Suspense fallback={null}>
-      <App />
-    </Suspense>
-  );
+  redirect(`/${routing.defaultLocale}`);
 };
 
 export default HomePage;

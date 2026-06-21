@@ -1,10 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { describe, expect, it, vi } from 'vitest';
 import { toggleSelectedItem } from '../../store/selectedItemsSlice';
 import { createAppStore } from '../../store';
 import { mockCharacterResults } from '../../test-utils/characters';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { SelectedItemsFlyout } from './SelectedItemsFlyout';
 
 describe('SelectedItemsFlyout', () => {
@@ -16,7 +17,7 @@ describe('SelectedItemsFlyout', () => {
       store.dispatch(toggleSelectedItem(mockCharacterResults[1]));
     }
 
-    render(
+    renderWithIntl(
       <Provider store={store}>
         <SelectedItemsFlyout />
       </Provider>

@@ -1,9 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ComponentProps } from 'react';
 import { Provider } from 'react-redux';
 import { describe, expect, it, vi } from 'vitest';
 import { mockCharacterResults } from '../../test-utils/characters';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { createAppStore } from '../../store';
 import { Results } from './Results';
 
@@ -27,7 +28,7 @@ const defaultProps: ResultsProps = {
 };
 
 const renderResults = (props: Partial<ResultsProps> = {}) => {
-  render(
+  renderWithIntl(
     <Provider store={createAppStore()}>
       <Results {...defaultProps} {...props} />
     </Provider>

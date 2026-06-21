@@ -1,7 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useDispatch } from 'react-redux';
 import { Search } from './components/Search';
 import { Results } from './components/Results';
@@ -16,6 +18,7 @@ import {
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
 import { getAssetUrl } from './utils/assets';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { usePathname, useRouter } from './i18n/navigation';
 import type { CharacterResult } from './types/character';
 import type { AppDispatch } from './store';
 
@@ -34,6 +37,7 @@ const getCharacterId = (url: string) => {
 const allowedSearchParams = ['page', 'details'];
 
 const App = () => {
+  const t = useTranslations('ErrorMessage');
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const pathname = usePathname();
@@ -68,7 +72,7 @@ const App = () => {
     typeof charactersError.error === 'string'
       ? charactersError.error
       : charactersError
-        ? 'Unable to load results. Please try again.'
+        ? t('message')
         : '';
 
   const moveToUrl = useCallback(
@@ -171,7 +175,7 @@ const App = () => {
     updatePageInUrl(currentPage - 1);
   };
 
-  const backgroundImage = `url("${getAssetUrl('background-image.png')}")`;
+  const backgroundAsset = getAssetUrl('background-image.png');
 
   if (hasUnknownSearchParam) {
     return (
@@ -183,43 +187,51 @@ const App = () => {
 
   return (
     <main className="app-page">
-      <div
-        className="min-h-[calc(100vh-74px)] space-y-4 bg-cover bg-center bg-fixed py-4"
-        style={{ backgroundImage }}
-      >
-        <Search onSearch={handleSearch} />
-        <div
-          className={`mx-auto grid w-full max-w-[1800px] grid-cols-1 gap-5 ${
-            detailsId ? 'xl:grid-cols-[minmax(0,1fr)_380px]' : ''
-          }`}
-        >
-          <ErrorBoundary
-            key={resultsBoundaryKey}
-            onError={handleResultsBoundaryError}
-            onReset={handleResultsBoundaryReset}
+      <div className="relative min-h-[calc(100vh-74px)] space-y-4 overflow-hidden py-4">
+        <Image
+          src={backgroundAsset}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="pointer-events-none object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="relative z-10 space-y-4">
+          <Search onSearch={handleSearch} />
+          <div
+            className={`mx-auto grid w-full max-w-[1800px] grid-cols-1 gap-5 ${
+              detailsId ? 'xl:grid-cols-[minmax(0,1fr)_380px]' : ''
+            }`}
           >
-            <Results
-              items={items}
-              searchTerm={searchTerm}
-              currentPage={currentPage}
-              totalItems={totalItems}
-              hasNextPage={hasNextPage}
-              hasPreviousPage={hasPreviousPage}
-              isLoading={isFetching}
-              errorMessage={errorMessage}
-              onRetry={handleRetry}
-              onRefreshCache={handleRefreshCache}
-              onPageChange={handlePageChange}
-              onNextPage={handleNextPage}
-              onPreviousPage={handlePreviousPage}
-              onItemSelect={openDetails}
-            />
-          </ErrorBoundary>
-          <div className="px-6 pb-10 sm:px-9 xl:px-0 xl:pr-9">
-            <DetailsPanel detailsId={detailsId} onClose={closeDetails} />
+            <ErrorBoundary
+              key={resultsBoundaryKey}
+              onError={handleResultsBoundaryError}
+              onReset={handleResultsBoundaryReset}
+            >
+              <Results
+                items={items}
+                searchTerm={searchTerm}
+                currentPage={currentPage}
+                totalItems={totalItems}
+                hasNextPage={hasNextPage}
+                hasPreviousPage={hasPreviousPage}
+                isLoading={isFetching}
+                errorMessage={errorMessage}
+                onRetry={handleRetry}
+                onRefreshCache={handleRefreshCache}
+                onPageChange={handlePageChange}
+                onNextPage={handleNextPage}
+                onPreviousPage={handlePreviousPage}
+                onItemSelect={openDetails}
+              />
+            </ErrorBoundary>
+            <div className="px-6 pb-10 sm:px-9 xl:px-0 xl:pr-9">
+              <DetailsPanel detailsId={detailsId} onClose={closeDetails} />
+            </div>
           </div>
+          <SelectedItemsFlyout />
         </div>
-        <SelectedItemsFlyout />
       </div>
     </main>
   );

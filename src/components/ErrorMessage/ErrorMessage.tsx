@@ -1,3 +1,5 @@
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { ErrorButton } from '../ErrorButton';
 import { getAssetUrl } from '../../utils/assets';
 
@@ -15,56 +17,78 @@ const updateIcon = getAssetUrl('update-svgrepo-com.svg');
 const wifiIcon = getAssetUrl('wifi-slash-svgrepo-com.svg');
 
 export const ErrorMessage = ({
-  title = 'Unable to load results',
-  message = 'Something went wrong while fetching the data. This might be a temporary issue. Please try again.',
+  title,
+  message,
   onRetry,
   showErrorButton = true,
 }: ErrorMessageProps) => {
-  const backgroundImage = `url("${errorBackground}")`;
+  const t = useTranslations('ErrorMessage');
+  const titleText = title ?? t('title');
+  const messageText = message ?? t('message');
 
   return (
-    <div
-      className="error-message-card"
-      style={{ backgroundImage }}
-    >
+    <div className="error-message-card">
+      <Image
+        src={errorBackground}
+        alt=""
+        fill
+        sizes="100vw"
+        className="pointer-events-none object-cover"
+      />
       <div className="absolute inset-0 bg-black/45" />
       <div className="relative z-10 mx-auto max-w-[900px]">
-        <img
+        <Image
           src={attentionIcon}
+          alt=""
+          width={64}
+          height={64}
+          unoptimized
           className="error-icon-red mx-auto block h-16 w-16"
         />
-        <h2 className="mt-5 text-[28px] font-bold text-white">{title}</h2>
+        <h2 className="mt-5 text-[28px] font-bold text-white">{titleText}</h2>
         <p className="mx-auto mt-4 max-w-[720px] text-[18px] leading-snug text-red-400">
-          {message}
+          {messageText}
         </p>
 
         <div className="mx-auto my-7 h-px max-w-[860px] bg-red-500" />
 
         <div className="mx-auto max-w-[760px] rounded-[10px] border border-zinc-700 bg-zinc-950/80 p-6 text-left">
           <p className="text-[18px] font-semibold text-white">
-            What you can try:
+            {t('tryTitle')}
           </p>
           <ul className="mt-5 space-y-4 text-[16px] text-zinc-100">
             <li className="flex items-center gap-4">
-              <img
+              <Image
                 src={updateIcon}
+                alt=""
+                width={24}
+                height={24}
+                unoptimized
                 className="error-icon-red h-6 w-6 shrink-0"
               />
-              Click &quot;Try Again&quot; to reload the results
+              {t('tryAgainText')}
             </li>
             <li className="flex items-center gap-4">
-              <img
+              <Image
                 src={magnifierIcon}
+                alt=""
+                width={24}
+                height={24}
+                unoptimized
                 className="error-icon-red h-6 w-6 shrink-0"
               />
-              Try different search terms
+              {t('differentSearch')}
             </li>
             <li className="flex items-center gap-4">
-              <img
+              <Image
                 src={wifiIcon}
+                alt=""
+                width={24}
+                height={24}
+                unoptimized
                 className="error-icon-red h-6 w-6 shrink-0"
               />
-              Check your internet connection
+              {t('checkInternet')}
             </li>
           </ul>
         </div>
@@ -75,11 +99,15 @@ export const ErrorMessage = ({
             className="error-retry-button"
             onClick={onRetry}
           >
-            <img
+            <Image
               src={updateIcon}
+              alt=""
+              width={24}
+              height={24}
+              unoptimized
               className="error-icon-red h-6 w-6"
             />
-            Try Again
+            {t('tryAgainButton')}
           </button>
         )}
 
@@ -87,7 +115,7 @@ export const ErrorMessage = ({
           <>
             <div className="mx-auto my-6 flex max-w-[280px] items-center gap-4 text-[16px] text-zinc-200">
               <span className="h-px flex-1 bg-zinc-700" />
-              or
+              {t('or')}
               <span className="h-px flex-1 bg-zinc-700" />
             </div>
             <ErrorButton variant="error" />
@@ -95,8 +123,8 @@ export const ErrorMessage = ({
         )}
 
         <p className="mt-6 text-[16px] text-zinc-200">
-          If the problem persists, please{' '}
-          <span className="text-red-400">contact support</span>.
+          {t('supportPrefix')}{' '}
+          <span className="text-red-400">{t('supportLink')}</span>.
         </p>
       </div>
     </div>

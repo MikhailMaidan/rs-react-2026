@@ -1,10 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { About } from './About';
 
 describe('About', () => {
   it('renders creator info and RS School link', () => {
-    render(<About />);
+    renderWithIntl(<About />);
 
     expect(screen.getByRole('img', { name: 'Future' })).toBeInTheDocument();
     expect(screen.getByText(/about the creator/i)).toBeInTheDocument();
@@ -14,7 +15,7 @@ describe('About', () => {
     ).toHaveAttribute('href', 'https://rs.school/courses/reactjs');
     expect(screen.getByRole('link', { name: /main menu/i })).toHaveAttribute(
       'href',
-      '/'
+      '/en'
     );
   });
 });

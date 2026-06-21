@@ -1,4 +1,5 @@
 import { skipToken } from '@reduxjs/toolkit/query';
+import { useTranslations } from 'next-intl';
 import { useDispatch } from 'react-redux';
 import {
   charactersQueryApi,
@@ -13,6 +14,7 @@ interface DetailsPanelProps {
 }
 
 export const DetailsPanel = ({ detailsId, onClose }: DetailsPanelProps) => {
+  const t = useTranslations('Details');
   const dispatch = useDispatch<AppDispatch>();
   const {
     data: character,
@@ -23,7 +25,7 @@ export const DetailsPanel = ({ detailsId, onClose }: DetailsPanelProps) => {
     error && 'error' in error && typeof error.error === 'string'
       ? error.error
       : error
-        ? 'Unable to load details. Please try again.'
+        ? t('fallbackError')
         : '';
 
   const handleRefreshDetails = () => {
@@ -46,7 +48,7 @@ export const DetailsPanel = ({ detailsId, onClose }: DetailsPanelProps) => {
 
       <div className="flex items-center gap-2">
         <p className="min-w-0 flex-1 text-sm font-semibold uppercase text-yellow-400">
-          Details
+          {t('title')}
         </p>
         <button
           type="button"
@@ -54,12 +56,12 @@ export const DetailsPanel = ({ detailsId, onClose }: DetailsPanelProps) => {
           disabled={isFetching}
           onClick={handleRefreshDetails}
         >
-          Refresh details
+          {t('refresh')}
         </button>
         <button
           type="button"
           className="details-close-button"
-          aria-label="Close details"
+          aria-label={t('close')}
           onClick={onClose}
         >
           x
@@ -67,7 +69,7 @@ export const DetailsPanel = ({ detailsId, onClose }: DetailsPanelProps) => {
       </div>
 
       <h2 className="mt-3 break-words text-[28px] font-bold leading-tight text-white">
-        {character?.name ?? 'Loading...'}
+        {character?.name ?? t('loading')}
       </h2>
 
       {errorMessage ? (
@@ -76,19 +78,19 @@ export const DetailsPanel = ({ detailsId, onClose }: DetailsPanelProps) => {
         character && (
           <dl className="mt-8 space-y-5 text-[17px]">
             <div>
-              <dt className="font-bold text-yellow-400">Birth year</dt>
+              <dt className="font-bold text-yellow-400">{t('birthYear')}</dt>
               <dd className="mt-1 text-zinc-100">{character.birth_year}</dd>
             </div>
             <div>
-              <dt className="font-bold text-yellow-400">Gender</dt>
+              <dt className="font-bold text-yellow-400">{t('gender')}</dt>
               <dd className="mt-1 text-zinc-100">{character.gender}</dd>
             </div>
             <div>
-              <dt className="font-bold text-yellow-400">Height</dt>
+              <dt className="font-bold text-yellow-400">{t('height')}</dt>
               <dd className="mt-1 text-zinc-100">{character.height} cm</dd>
             </div>
             <div>
-              <dt className="font-bold text-yellow-400">Mass</dt>
+              <dt className="font-bold text-yellow-400">{t('mass')}</dt>
               <dd className="mt-1 text-zinc-100">{character.mass} kg</dd>
             </div>
           </dl>

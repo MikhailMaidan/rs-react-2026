@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { Header } from '../components/Header';
 import '../index.css';
-import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: 'Starforge Search',
@@ -15,13 +13,8 @@ interface RootLayoutProps {
 
 const RootLayout = ({ children }: RootLayoutProps) => {
   return (
-    <html lang="en">
-      <body>
-        <Providers>
-          <Header />
-          {children}
-        </Providers>
-      </body>
+    <html lang="en" suppressHydrationWarning>
+      <body>{children}</body>
     </html>
   );
 };
