@@ -16,7 +16,9 @@ type QueryError = {
 };
 
 const defaultCacheTtlSeconds = 300;
-const configuredCacheTtl = Number(import.meta.env.VITE_API_CACHE_TTL_SECONDS);
+const configuredCacheTtl = Number(
+  process.env.NEXT_PUBLIC_API_CACHE_TTL_SECONDS
+);
 
 export const apiCacheTtlSeconds = Number.isFinite(configuredCacheTtl)
   ? configuredCacheTtl

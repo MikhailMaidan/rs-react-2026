@@ -1,2 +1,7 @@
-export const getAssetUrl = (assetPath: string) =>
-  `${import.meta.env.BASE_URL}${assetPath}`;
+export const getAssetUrl = (assetPath: string) => {
+  if (assetPath.startsWith('/')) {
+    return assetPath;
+  }
+
+  return `/${assetPath}`;
+};

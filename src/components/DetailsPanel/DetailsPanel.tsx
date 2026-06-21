@@ -1,4 +1,3 @@
-import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useDispatch } from 'react-redux';
 import {
@@ -8,15 +7,13 @@ import {
 import { Loader } from '../Loader';
 import type { AppDispatch } from '../../store';
 
-interface DetailsOutletContext {
+interface DetailsPanelProps {
+  detailsId: string | null;
   onClose: () => void;
 }
 
-export const DetailsPanel = () => {
+export const DetailsPanel = ({ detailsId, onClose }: DetailsPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [searchParams] = useSearchParams();
-  const { onClose } = useOutletContext<DetailsOutletContext>();
-  const detailsId = searchParams.get('details');
   const {
     data: character,
     error,

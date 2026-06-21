@@ -1,23 +1,36 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
-import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fetchCharacterDetails, fetchCharacters } from './api/charactersApi';
 import App from './App';
-import { DetailsPanel } from './components/DetailsPanel';
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
 import { createAppStore } from './store';
 import {
   mockCharacterResults,
   mockCharactersResponse,
 } from './test-utils/characters';
+import {
+  resetMockNavigation,
+  setMockUrl,
+  useMockSearch,
+} from './test-utils/nextNavigationMock';
 
 vi.mock('./api/charactersApi', () => ({
   ITEMS_PER_PAGE: 10,
   fetchCharacters: vi.fn(),
   fetchCharacterDetails: vi.fn(),
 }));
+
+vi.mock('next/navigation', async () => {
+  const navigationMock = await import('./test-utils/nextNavigationMock');
+
+  return {
+    useRouter: () => navigationMock.routerMock,
+    usePathname: navigationMock.useMockPathname,
+    useSearchParams: navigationMock.useMockSearchParams,
+  };
+});
 
 const emptyResult = {
   items: [],
@@ -46,6 +59,7 @@ describe('App', () => {
 
   beforeEach(() => {
     localStorage.clear();
+    resetMockNavigation();
     fetchCharactersMock.mockReset();
     fetchCharacterDetailsMock.mockReset();
   });
@@ -55,22 +69,18 @@ describe('App', () => {
   });
 
   const LocationDisplay = () => {
-    const location = useLocation();
+    const search = useMockSearch();
 
-    return <span data-testid="location">{location.search}</span>;
+    return <span data-testid="location">{search}</span>;
   };
 
   const renderApp = (initialEntries = ['/']) => {
+    setMockUrl(initialEntries[0]);
+
     render(
       <Provider store={createAppStore()}>
-        <MemoryRouter initialEntries={initialEntries}>
-          <Routes>
-            <Route path="/" element={<App />}>
-              <Route index element={<DetailsPanel />} />
-            </Route>
-          </Routes>
-          <LocationDisplay />
-        </MemoryRouter>
+        <App />
+        <LocationDisplay />
       </Provider>
     );
   };
@@ -399,11 +409,9 @@ describe('App', () => {
       ) => void = () => {};
       const detailsPromise = new Promise<
         (typeof mockCharactersResponse)[number]
-      >(
-        (resolve) => {
-          finishLoadingDetails = resolve;
-        }
-      );
+      >((resolve) => {
+        finishLoadingDetails = resolve;
+      });
 
       fetchCharactersMock.mockResolvedValue(lukeResult);
       fetchCharacterDetailsMock.mockReturnValue(detailsPromise);

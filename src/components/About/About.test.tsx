@@ -1,15 +1,10 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { About } from './About';
 
 describe('About', () => {
   it('renders creator info and RS School link', () => {
-    render(
-      <MemoryRouter>
-        <About />
-      </MemoryRouter>
-    );
+    render(<About />);
 
     expect(screen.getByRole('img', { name: 'Future' })).toBeInTheDocument();
     expect(screen.getByText(/about the creator/i)).toBeInTheDocument();

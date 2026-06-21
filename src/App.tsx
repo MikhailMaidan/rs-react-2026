@@ -1,12 +1,14 @@
+'use client';
+
 import { useCallback, useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useDispatch } from 'react-redux';
-import { Outlet, useSearchParams } from 'react-router-dom';
-import { Header } from './components/Header';
 import { Search } from './components/Search';
 import { Results } from './components/Results';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NotFound } from './components/NotFound';
 import { SelectedItemsFlyout } from './components/SelectedItemsFlyout';
+import { DetailsPanel } from './components/DetailsPanel';
 import {
   charactersQueryApi,
   useGetCharactersQuery,
@@ -33,7 +35,9 @@ const allowedSearchParams = ['page', 'details'];
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useLocalStorage(
     SEARCH_TERM_STORAGE_KEY,
     ''
@@ -43,8 +47,7 @@ const App = () => {
   const hasUnknownSearchParam = Array.from(searchParams.keys()).some(
     (key) => !allowedSearchParams.includes(key)
   );
-  const [hasResultsBoundaryError, setHasResultsBoundaryError] =
-    useState(false);
+  const [hasResultsBoundaryError, setHasResultsBoundaryError] = useState(false);
   const [resultsBoundaryKey, setResultsBoundaryKey] = useState(0);
   const {
     data: charactersData,
@@ -68,27 +71,41 @@ const App = () => {
         ? 'Unable to load results. Please try again.'
         : '';
 
+  const moveToUrl = useCallback(
+    (nextSearchParams: URLSearchParams, replace = false) => {
+      const queryString = nextSearchParams.toString();
+      const nextUrl = queryString ? `${pathname}?${queryString}` : pathname;
+
+      if (replace) {
+        router.replace(nextUrl, { scroll: false });
+      } else {
+        router.push(nextUrl, { scroll: false });
+      }
+    },
+    [pathname, router]
+  );
+
   const updatePageInUrl = useCallback(
     (page: number, replace = false) => {
-      const nextSearchParams = new URLSearchParams(searchParams);
+      const nextSearchParams = new URLSearchParams(searchParams.toString());
       nextSearchParams.set('page', String(page));
       nextSearchParams.delete('details');
-      setSearchParams(nextSearchParams, { replace });
+      moveToUrl(nextSearchParams, replace);
     },
-    [searchParams, setSearchParams]
+    [searchParams, moveToUrl]
   );
 
   const openDetails = (item: CharacterResult) => {
-    const nextSearchParams = new URLSearchParams(searchParams);
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
     nextSearchParams.set('page', String(currentPage));
     nextSearchParams.set('details', getCharacterId(item.url));
-    setSearchParams(nextSearchParams);
+    moveToUrl(nextSearchParams);
   };
 
   const closeDetails = () => {
-    const nextSearchParams = new URLSearchParams(searchParams);
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
     nextSearchParams.delete('details');
-    setSearchParams(nextSearchParams);
+    moveToUrl(nextSearchParams);
   };
 
   useEffect(() => {
@@ -157,12 +174,15 @@ const App = () => {
   const backgroundImage = `url("${getAssetUrl('background-image.png')}")`;
 
   if (hasUnknownSearchParam) {
-    return <NotFound />;
+    return (
+      <main className="app-page">
+        <NotFound />
+      </main>
+    );
   }
 
   return (
     <main className="app-page">
-      <Header />
       <div
         className="min-h-[calc(100vh-74px)] space-y-4 bg-cover bg-center bg-fixed py-4"
         style={{ backgroundImage }}
@@ -196,7 +216,7 @@ const App = () => {
             />
           </ErrorBoundary>
           <div className="px-6 pb-10 sm:px-9 xl:px-0 xl:pr-9">
-            <Outlet context={{ onClose: closeDetails }} />
+            <DetailsPanel detailsId={detailsId} onClose={closeDetails} />
           </div>
         </div>
         <SelectedItemsFlyout />
