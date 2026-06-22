@@ -6,12 +6,10 @@ describe('fetchCharacters', () => {
   const fetchMock = vi.fn<typeof fetch>();
 
   beforeEach(() => {
-    vi.useFakeTimers();
     vi.stubGlobal('fetch', fetchMock);
   });
 
   afterEach(() => {
-    vi.useRealTimers();
     vi.unstubAllGlobals();
     fetchMock.mockReset();
   });
@@ -21,9 +19,7 @@ describe('fetchCharacters', () => {
       new Response(JSON.stringify(mockCharactersResponse), { status: 200 })
     );
 
-    const request = fetchCharacters('lu', 1);
-    await vi.advanceTimersByTimeAsync(500);
-    const data = await request;
+    const data = await fetchCharacters('lu', 1);
 
     expect(fetchMock).toHaveBeenCalledWith(
       `https://swapi.info/api/people?page=1&limit=${ITEMS_PER_PAGE}&search=lu`
@@ -45,22 +41,16 @@ describe('fetchCharacters', () => {
   it('rejects with the user-facing message when the API response fails', async () => {
     fetchMock.mockResolvedValue(new Response(null, { status: 500 }));
 
-    const request = expect(fetchCharacters('', 2)).rejects.toThrow(
+    await expect(fetchCharacters('', 2)).rejects.toThrow(
       'Unable to load results. Please try again.'
     );
-    await vi.advanceTimersByTimeAsync(500);
-
-    await request;
   });
 
   it('rejects with the same message for 404 response', async () => {
     fetchMock.mockResolvedValue(new Response(null, { status: 404 }));
 
-    const request = expect(fetchCharacters('unknown', 1)).rejects.toThrow(
+    await expect(fetchCharacters('unknown', 1)).rejects.toThrow(
       'Unable to load results. Please try again.'
     );
-    await vi.advanceTimersByTimeAsync(500);
-
-    await request;
   });
 });

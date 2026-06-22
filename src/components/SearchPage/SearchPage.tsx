@@ -31,6 +31,7 @@ export const SearchPage = ({
   searchTerm,
 }: SearchPageProps) => {
   const backgroundAsset = getAssetUrl('background-image.png');
+  const hasDetails = detailsId !== null;
   const closeDetailsHref = makeSearchHref({
     page: currentPage,
     searchTerm,
@@ -50,21 +51,26 @@ export const SearchPage = ({
         <div className="absolute inset-0 bg-black/10" />
         <div className="relative z-10 space-y-4">
           <SearchForm locale={locale} searchTerm={searchTerm} />
-          <div className="mx-auto grid w-full max-w-[1800px] grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+          <div
+            className={`mx-auto grid w-full max-w-[1800px] grid-cols-1 gap-5 ${
+              hasDetails ? 'xl:grid-cols-[minmax(0,1fr)_380px]' : ''
+            }`}
+          >
             <ServerResults
               charactersData={charactersData}
               currentPage={currentPage}
               errorMessage={resultsErrorMessage}
               searchTerm={searchTerm}
             />
-            <div className="px-6 pb-10 sm:px-9 xl:px-0 xl:pr-9">
-              <ServerDetailsPanel
-                character={character}
-                closeHref={closeDetailsHref}
-                errorMessage={detailsErrorMessage}
-                hasDetails={detailsId !== null}
-              />
-            </div>
+            {hasDetails && (
+              <div className="px-6 pb-10 sm:px-9 xl:px-0 xl:pr-9">
+                <ServerDetailsPanel
+                  character={character}
+                  closeHref={closeDetailsHref}
+                  errorMessage={detailsErrorMessage}
+                />
+              </div>
+            )}
           </div>
           <SelectedItemsFlyout />
         </div>
