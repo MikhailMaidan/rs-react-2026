@@ -3,10 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearSelectedItems } from '../../store/selectedItemsSlice';
 import type { AppDispatch, RootState } from '../../store';
 
-const makeCsvValue = (value: string) => {
-  return `"${value.replaceAll('"', '""')}"`;
-};
-
 export const SelectedItemsFlyout = () => {
   const t = useTranslations('Selected');
   const dispatch = useDispatch<AppDispatch>();
@@ -20,24 +16,6 @@ export const SelectedItemsFlyout = () => {
 
   const handleUnselectAll = () => {
     dispatch(clearSelectedItems());
-  };
-
-  const handleDownload = () => {
-    const csvRows = [
-      ['Name', 'Description', 'Details URL'].map(makeCsvValue).join(','),
-      ...selectedItems.map((item) =>
-        [item.name, item.description, item.url].map(makeCsvValue).join(',')
-      ),
-    ];
-    const csvText = csvRows.join('\n');
-    const blob = new Blob([csvText], { type: 'text/csv' });
-    const downloadUrl = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-
-    link.href = downloadUrl;
-    link.download = `${selectedItems.length}_items.csv`;
-    link.click();
-    URL.revokeObjectURL(downloadUrl);
   };
 
   return (
@@ -54,13 +32,23 @@ export const SelectedItemsFlyout = () => {
           >
             {t('unselectAll')}
           </button>
-          <button
-            type="button"
-            className="cursor-pointer rounded-md bg-yellow-400 px-5 py-3 font-bold text-black transition hover:bg-yellow-300"
-            onClick={handleDownload}
+          <form
+            action="/api/export-csv"
+            method="post"
+            aria-label={t('download')}
           >
-            {t('download')}
-          </button>
+            <input
+              type="hidden"
+              name="items"
+              value={JSON.stringify(selectedItems)}
+            />
+            <button
+              type="submit"
+              className="w-full cursor-pointer rounded-md bg-yellow-400 px-5 py-3 font-bold text-black transition hover:bg-yellow-300"
+            >
+              {t('download')}
+            </button>
+          </form>
         </div>
       </div>
     </div>

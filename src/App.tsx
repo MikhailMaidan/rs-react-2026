@@ -15,11 +15,12 @@ import {
   charactersQueryApi,
   useGetCharactersQuery,
 } from './api/charactersQueryApi';
+import type { CharactersData } from './api/charactersApi';
 import { SEARCH_TERM_STORAGE_KEY } from './constants/localStorage';
 import { getAssetUrl } from './utils/assets';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { usePathname, useRouter } from './i18n/navigation';
-import type { CharacterResult } from './types/character';
+import type { Character, CharacterResult } from './types/character';
 import type { AppDispatch } from './store';
 
 const getPageFromSearchParams = (searchParams: URLSearchParams) => {
@@ -36,7 +37,19 @@ const getCharacterId = (url: string) => {
 
 const allowedSearchParams = ['page', 'details'];
 
-const App = () => {
+interface AppProps {
+  initialCharactersData?: CharactersData | null;
+  initialCharactersPage?: number;
+  initialDetailsId?: string | null;
+  initialCharacter?: Character | null;
+}
+
+const App = ({
+  initialCharactersData = null,
+  initialCharactersPage,
+  initialDetailsId = null,
+  initialCharacter = null,
+}: AppProps = {}) => {
   const t = useTranslations('ErrorMessage');
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
@@ -62,10 +75,19 @@ const App = () => {
     { searchTerm, page: currentPage },
     { skip: hasUnknownSearchParam }
   );
-  const items = charactersData?.items ?? [];
-  const totalItems = charactersData?.totalItems ?? 0;
-  const hasNextPage = charactersData?.hasNextPage ?? false;
-  const hasPreviousPage = charactersData?.hasPreviousPage ?? false;
+  const canShowInitialCharacters =
+    searchTerm === '' &&
+    currentPage === initialCharactersPage &&
+    initialCharactersData !== null;
+  const visibleCharactersData =
+    charactersData ??
+    (canShowInitialCharacters ? initialCharactersData : undefined);
+  const items = visibleCharactersData?.items ?? [];
+  const totalItems = visibleCharactersData?.totalItems ?? 0;
+  const hasNextPage = visibleCharactersData?.hasNextPage ?? false;
+  const hasPreviousPage = visibleCharactersData?.hasPreviousPage ?? false;
+  const isInitialCharactersVisible =
+    !charactersData && canShowInitialCharacters;
   const errorMessage =
     charactersError &&
     'error' in charactersError &&
@@ -216,7 +238,7 @@ const App = () => {
                 totalItems={totalItems}
                 hasNextPage={hasNextPage}
                 hasPreviousPage={hasPreviousPage}
-                isLoading={isFetching}
+                isLoading={isFetching && !isInitialCharactersVisible}
                 errorMessage={errorMessage}
                 onRetry={handleRetry}
                 onRefreshCache={handleRefreshCache}
@@ -227,7 +249,12 @@ const App = () => {
               />
             </ErrorBoundary>
             <div className="px-6 pb-10 sm:px-9 xl:px-0 xl:pr-9">
-              <DetailsPanel detailsId={detailsId} onClose={closeDetails} />
+              <DetailsPanel
+                detailsId={detailsId}
+                initialDetailsId={initialDetailsId}
+                initialCharacter={initialCharacter}
+                onClose={closeDetails}
+              />
             </div>
           </div>
           <SelectedItemsFlyout />

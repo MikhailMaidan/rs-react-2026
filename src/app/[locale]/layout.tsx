@@ -25,9 +25,10 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   }
 
   setRequestLocale(locale);
+  const messages = (await import(`../../messages/${locale}.json`)).default;
 
   return (
-    <NextIntlClientProvider>
+    <NextIntlClientProvider locale={locale} messages={messages}>
       <Providers>
         <Header />
         {children}

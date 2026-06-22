@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2023",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "es2023"
-    ],
+    "lib": ["dom", "dom.iterable", "es2023"],
     "allowJs": false,
     "skipLibCheck": true,
     "strict": true,
@@ -17,6 +13,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
     "plugins": [
       {
         "name": "next"
@@ -30,9 +27,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx"
-  ]
+  "exclude": ["node_modules"]
 }

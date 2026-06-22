@@ -7,13 +7,21 @@ import {
 } from '../../api/charactersQueryApi';
 import { Loader } from '../Loader';
 import type { AppDispatch } from '../../store';
+import type { Character } from '../../types/character';
 
 interface DetailsPanelProps {
   detailsId: string | null;
+  initialDetailsId?: string | null;
+  initialCharacter?: Character | null;
   onClose: () => void;
 }
 
-export const DetailsPanel = ({ detailsId, onClose }: DetailsPanelProps) => {
+export const DetailsPanel = ({
+  detailsId,
+  initialDetailsId = null,
+  initialCharacter = null,
+  onClose,
+}: DetailsPanelProps) => {
   const t = useTranslations('Details');
   const dispatch = useDispatch<AppDispatch>();
   const {
@@ -27,6 +35,8 @@ export const DetailsPanel = ({ detailsId, onClose }: DetailsPanelProps) => {
       : error
         ? t('fallbackError')
         : '';
+  const visibleCharacter =
+    character ?? (detailsId === initialDetailsId ? initialCharacter : null);
 
   const handleRefreshDetails = () => {
     if (detailsId) {
@@ -44,7 +54,7 @@ export const DetailsPanel = ({ detailsId, onClose }: DetailsPanelProps) => {
 
   return (
     <aside className="details-panel">
-      {isFetching && <Loader place="center" />}
+      {isFetching && !visibleCharacter && <Loader place="center" />}
 
       <div className="flex items-center gap-2">
         <p className="min-w-0 flex-1 text-sm font-semibold uppercase text-yellow-400">
@@ -69,29 +79,33 @@ export const DetailsPanel = ({ detailsId, onClose }: DetailsPanelProps) => {
       </div>
 
       <h2 className="mt-3 break-words text-[28px] font-bold leading-tight text-white">
-        {character?.name ?? t('loading')}
+        {visibleCharacter?.name ?? t('loading')}
       </h2>
 
       {errorMessage ? (
         <p className="mt-8 text-red-400">{errorMessage}</p>
       ) : (
-        character && (
+        visibleCharacter && (
           <dl className="mt-8 space-y-5 text-[17px]">
             <div>
               <dt className="font-bold text-yellow-400">{t('birthYear')}</dt>
-              <dd className="mt-1 text-zinc-100">{character.birth_year}</dd>
+              <dd className="mt-1 text-zinc-100">
+                {visibleCharacter.birth_year}
+              </dd>
             </div>
             <div>
               <dt className="font-bold text-yellow-400">{t('gender')}</dt>
-              <dd className="mt-1 text-zinc-100">{character.gender}</dd>
+              <dd className="mt-1 text-zinc-100">{visibleCharacter.gender}</dd>
             </div>
             <div>
               <dt className="font-bold text-yellow-400">{t('height')}</dt>
-              <dd className="mt-1 text-zinc-100">{character.height} cm</dd>
+              <dd className="mt-1 text-zinc-100">
+                {visibleCharacter.height} cm
+              </dd>
             </div>
             <div>
               <dt className="font-bold text-yellow-400">{t('mass')}</dt>
-              <dd className="mt-1 text-zinc-100">{character.mass} kg</dd>
+              <dd className="mt-1 text-zinc-100">{visibleCharacter.mass} kg</dd>
             </div>
           </dl>
         )
