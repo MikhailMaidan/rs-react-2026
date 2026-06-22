@@ -570,7 +570,7 @@
   }
 }
 
-[data-theme='light'] body {
+[data-theme='light'] {
   background-color: #f4f4f5;
 }
 

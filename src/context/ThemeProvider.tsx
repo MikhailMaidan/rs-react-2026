@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ThemeContext, type Theme } from './ThemeContext';
 
 interface ThemeProviderProps {
@@ -7,10 +7,6 @@ interface ThemeProviderProps {
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>('dark');
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-  }, [theme]);
 
   const toggleTheme = () => {
     if (theme === 'dark') {
@@ -22,7 +18,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      <div data-theme={theme}>{children}</div>
     </ThemeContext.Provider>
   );
 };

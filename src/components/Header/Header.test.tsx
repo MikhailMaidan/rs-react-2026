@@ -33,7 +33,7 @@ describe('Header', () => {
   });
 
   const renderHeader = () => {
-    renderWithIntl(
+    return renderWithIntl(
       <ThemeProvider>
         <Header />
       </ThemeProvider>
@@ -61,13 +61,14 @@ describe('Header', () => {
   it('changes theme after button click', async () => {
     const user = userEvent.setup();
 
-    renderHeader();
+    const { container } = renderHeader();
+    const themeWrapper = container.querySelector('[data-theme]');
 
-    expect(document.documentElement.dataset.theme).toBe('dark');
+    expect(themeWrapper).toHaveAttribute('data-theme', 'dark');
 
     await user.click(screen.getByRole('button', { name: /light/i }));
 
-    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(themeWrapper).toHaveAttribute('data-theme', 'light');
     expect(screen.getByRole('button', { name: /dark/i })).toBeInTheDocument();
   });
 });
