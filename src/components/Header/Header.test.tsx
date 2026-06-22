@@ -1,17 +1,41 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '../../context';
+import { resetMockNavigation } from '../../test-utils/nextNavigationMock';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { Header } from './Header';
 
+vi.mock('next/navigation', async () => {
+  const navigationMock = await import('../../test-utils/nextNavigationMock');
+
+  return {
+    useSearchParams: navigationMock.useMockSearchParams,
+  };
+});
+
+vi.mock('../../i18n/navigation', async () => {
+  const actual = await vi.importActual<typeof import('../../i18n/navigation')>(
+    '../../i18n/navigation'
+  );
+  const navigationMock = await import('../../test-utils/nextNavigationMock');
+
+  return {
+    ...actual,
+    useRouter: () => navigationMock.routerMock,
+    usePathname: navigationMock.useMockPathname,
+  };
+});
+
 describe('Header', () => {
+  beforeEach(() => {
+    resetMockNavigation();
+  });
+
   const renderHeader = () => {
-    render(
+    return renderWithIntl(
       <ThemeProvider>
-        <MemoryRouter>
-          <Header />
-        </MemoryRouter>
+        <Header />
       </ThemeProvider>
     );
   };
@@ -22,28 +46,29 @@ describe('Header', () => {
     expect(screen.getByRole('img', { name: 'Starforge' })).toBeInTheDocument();
     expect(screen.getByLabelText(/go to main page/i)).toHaveAttribute(
       'href',
-      '/'
+      '/en'
     );
     expect(screen.getByRole('link', { name: /plug/i })).toHaveAttribute(
       'href',
-      '/plug'
+      '/en/plug'
     );
     expect(screen.getByRole('link', { name: /about/i })).toHaveAttribute(
       'href',
-      '/about'
+      '/en/about'
     );
   });
 
   it('changes theme after button click', async () => {
     const user = userEvent.setup();
 
-    renderHeader();
+    const { container } = renderHeader();
+    const themeWrapper = container.querySelector('[data-theme]');
 
-    expect(document.documentElement.dataset.theme).toBe('dark');
+    expect(themeWrapper).toHaveAttribute('data-theme', 'dark');
 
     await user.click(screen.getByRole('button', { name: /light/i }));
 
-    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(themeWrapper).toHaveAttribute('data-theme', 'light');
     expect(screen.getByRole('button', { name: /dark/i })).toBeInTheDocument();
   });
 });

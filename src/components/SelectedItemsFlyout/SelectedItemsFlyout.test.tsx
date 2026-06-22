@@ -1,10 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { toggleSelectedItem } from '../../store/selectedItemsSlice';
 import { createAppStore } from '../../store';
 import { mockCharacterResults } from '../../test-utils/characters';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { SelectedItemsFlyout } from './SelectedItemsFlyout';
 
 describe('SelectedItemsFlyout', () => {
@@ -16,13 +17,16 @@ describe('SelectedItemsFlyout', () => {
       store.dispatch(toggleSelectedItem(mockCharacterResults[1]));
     }
 
-    render(
+    const view = renderWithIntl(
       <Provider store={store}>
         <SelectedItemsFlyout />
       </Provider>
     );
 
-    return store;
+    return {
+      ...view,
+      store,
+    };
   };
 
   it('does not render when selected items list is empty', () => {
@@ -39,7 +43,7 @@ describe('SelectedItemsFlyout', () => {
 
   it('unselects all items', async () => {
     const user = userEvent.setup();
-    const store = renderFlyout();
+    const { store } = renderFlyout();
 
     await user.click(screen.getByRole('button', { name: /unselect all/i }));
 
@@ -47,27 +51,23 @@ describe('SelectedItemsFlyout', () => {
     expect(screen.queryByText(/selected:/i)).not.toBeInTheDocument();
   });
 
-  it('downloads selected items as csv', async () => {
-    const user = userEvent.setup();
-    const createObjectURL = vi
-      .spyOn(URL, 'createObjectURL')
-      .mockReturnValue('blob:items');
-    const revokeObjectURL = vi
-      .spyOn(URL, 'revokeObjectURL')
-      .mockImplementation(() => {});
-    const click = vi
-      .spyOn(HTMLAnchorElement.prototype, 'click')
-      .mockImplementation(() => {});
-
+  it('posts selected items to csv route', () => {
     renderFlyout();
-    await user.click(screen.getByRole('button', { name: /download/i }));
 
-    expect(createObjectURL).toHaveBeenCalledTimes(1);
-    expect(click).toHaveBeenCalledTimes(1);
-    expect(revokeObjectURL).toHaveBeenCalledWith('blob:items');
+    const form = screen.getByRole('form', { name: /download/i });
+    const itemsInput = form.querySelector<HTMLInputElement>(
+      'input[name="items"]'
+    );
 
-    createObjectURL.mockRestore();
-    revokeObjectURL.mockRestore();
-    click.mockRestore();
+    expect(form).toHaveAttribute('action', '/api/export-csv');
+    expect(form).toHaveAttribute('method', 'post');
+    expect(itemsInput).not.toBeNull();
+    expect(itemsInput?.value).toBe(
+      JSON.stringify([mockCharacterResults[0], mockCharacterResults[1]])
+    );
+    expect(screen.getByRole('button', { name: /download/i })).toHaveAttribute(
+      'type',
+      'submit'
+    );
   });
 });

@@ -1,4 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { SEARCH_TERM_STORAGE_KEY } from '../../constants/localStorage';
 import { getAssetUrl } from '../../utils/assets';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
@@ -10,6 +12,7 @@ interface SearchProps {
 }
 
 export const Search = ({ onSearch }: SearchProps) => {
+  const t = useTranslations('Search');
   const [savedSearchTerm] = useLocalStorage(SEARCH_TERM_STORAGE_KEY, '');
   const [searchTerm, setSearchTerm] = useState(savedSearchTerm);
 
@@ -31,18 +34,20 @@ export const Search = ({ onSearch }: SearchProps) => {
         <div className="rounded-[6px] border border-yellow-400/60 bg-zinc-950/70 px-4 py-4">
           <div>
             <div className="flex items-center gap-3">
-              <img
+              <Image
                 src={magnifierIcon}
+                alt=""
+                width={24}
+                height={24}
+                unoptimized
                 className="icon-gold h-6 w-6"
               />
               <h1 className="text-[22px] font-bold leading-none text-white">
-                Search
+                {t('title')}
               </h1>
             </div>
 
-            <p className="mt-2 text-xs text-zinc-200">
-              Enter a term to search for items. Your last search is saved.
-            </p>
+            <p className="mt-2 text-xs text-zinc-200">{t('description')}</p>
           </div>
 
           <form
@@ -51,17 +56,21 @@ export const Search = ({ onSearch }: SearchProps) => {
           >
             <input
               type="search"
-              placeholder="Search items..."
+              placeholder={t('placeholder')}
               value={searchTerm}
               className="search-input"
               onChange={handleChange}
             />
             <button type="submit" className="search-button">
-              <img
+              <Image
                 src={magnifierIcon}
+                alt=""
+                width={20}
+                height={20}
+                unoptimized
                 className="icon-black h-5 w-5"
               />
-              Search
+              {t('submit')}
             </button>
           </form>
         </div>

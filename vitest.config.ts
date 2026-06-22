@@ -1,14 +1,20 @@
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
 process.env.BROWSER ??= 'chrome';
 
+const nextIntlNavigationMock = fileURLToPath(
+  new URL('./src/test-utils/nextIntlNavigationMock.tsx', import.meta.url)
+);
+
 export default defineConfig({
-  base: '/rs-react-2026/',
-  plugins: [react(), tailwindcss()],
-  server: {
-    open: true,
+  resolve: {
+    alias: {
+      'next/image': 'next/image.js',
+      'next/link': 'next/link.js',
+      'next/navigation': 'next/navigation.js',
+      'next-intl/navigation': nextIntlNavigationMock,
+    },
   },
   test: {
     environment: 'jsdom',
@@ -21,9 +27,9 @@ export default defineConfig({
       exclude: [
         'src/**/*.test.{ts,tsx}',
         'src/**/*.spec.{ts,tsx}',
-        'src/main.tsx',
         'src/setupTests.ts',
         'src/**/*.d.ts',
+        'src/app/**/*.{ts,tsx}',
       ],
       thresholds: {
         statements: 80,

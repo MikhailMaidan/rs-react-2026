@@ -1,13 +1,14 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { describe, expect, it, vi } from 'vitest';
 import { mockCharacterResults } from '../../test-utils/characters';
+import { renderWithIntl } from '../../test-utils/renderWithIntl';
 import { createAppStore } from '../../store';
 import { CardList } from './CardList';
 
 describe('CardList', () => {
   const renderCardList = (items = mockCharacterResults) => {
-    render(
+    renderWithIntl(
       <Provider store={createAppStore()}>
         <CardList items={items} onItemSelect={vi.fn()} />
       </Provider>

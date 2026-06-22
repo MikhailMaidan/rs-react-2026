@@ -10,19 +10,12 @@ export interface CharactersData {
 }
 
 export const ITEMS_PER_PAGE = 10;
-const loadingDelay = 500;
-
-const wait = (delay: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, delay);
-  });
 
 export const fetchCharacters = async (
   searchTerm: string,
   page: number
 ): Promise<CharactersData> => {
   const requestUrl = buildPeopleUrl(searchTerm, page, ITEMS_PER_PAGE);
-  await wait(loadingDelay);
 
   const response = await fetch(requestUrl);
 
@@ -55,11 +48,7 @@ export const fetchCharacters = async (
   };
 };
 
-export const fetchCharacterDetails = async (
-  id: string
-): Promise<Character> => {
-  await wait(loadingDelay);
-
+export const fetchCharacterDetails = async (id: string): Promise<Character> => {
   const response = await fetch(buildPersonUrl(id));
 
   if (!response.ok) {

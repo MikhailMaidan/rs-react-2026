@@ -1,0 +1,94 @@
+{
+  "Header": {
+    "mainAria": "Go to main page",
+    "plug": "Plug",
+    "about": "About",
+    "light": "Light",
+    "dark": "Dark",
+    "languageLabel": "Language",
+    "languageEnglish": "EN",
+    "languageRussian": "RU"
+  },
+  "Search": {
+    "title": "Search",
+    "description": "Enter a term to search for items. Your last search is saved.",
+    "placeholder": "Search items...",
+    "submit": "Search"
+  },
+  "Results": {
+    "title": "Results",
+    "showingFor": "Showing results for \"{term}\"",
+    "showingAll": "Showing results for all items",
+    "total": "Total: {count} items",
+    "previous": "Previous",
+    "next": "Next",
+    "refresh": "Refresh"
+  },
+  "CardList": {
+    "empty": "No results found",
+    "caption": "Results",
+    "select": "Select",
+    "itemName": "Item Name",
+    "itemDescription": "Item Description",
+    "selectItem": "Select {name}"
+  },
+  "ErrorButton": {
+    "label": "Error Button"
+  },
+  "ErrorMessage": {
+    "title": "Unable to load results",
+    "message": "Something went wrong while fetching the data. This might be a temporary issue. Please try again.",
+    "tryTitle": "What you can try:",
+    "tryAgainText": "Click \"Try Again\" to reload the results",
+    "differentSearch": "Try different search terms",
+    "checkInternet": "Check your internet connection",
+    "tryAgainButton": "Try Again",
+    "or": "or",
+    "supportPrefix": "If the problem persists, please",
+    "supportLink": "contact support"
+  },
+  "Details": {
+    "title": "Details",
+    "refresh": "Refresh details",
+    "close": "Close details",
+    "loading": "Loading...",
+    "fallbackError": "Unable to load details. Please try again.",
+    "birthYear": "Birth year",
+    "gender": "Gender",
+    "height": "Height",
+    "mass": "Mass"
+  },
+  "Selected": {
+    "selected": "Selected: {count}",
+    "unselectAll": "Unselect all",
+    "download": "Download"
+  },
+  "Loader": {
+    "label": "Loading results"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "text": "This route does not exist or has not been implemented yet.",
+    "back": "Back to Search"
+  },
+  "About": {
+    "title": "About the Creator",
+    "subtitle": "a.k.a. Future Hokage - The Dark Lord of Half-Finished Projects",
+    "greeting": "Greetings, brave visitor.",
+    "paragraphOne": "You have stumbled into the lair of Future - a shadowy figure who lurks in the code mines of Novi Sad, wielding nothing but caffeine, questionable life choices, and a red lightsaber that's mostly for dramatic effect.",
+    "paragraphTwo": "I am Future Hokage aka Master Baiter, a caffeine-fueled Sith cosplayer who's been called \"Future\" for over a decade but still hasn't managed to drop the \"Future\" and become a proper Hokage.",
+    "paragraphThree": "Naturally, I start pet projects like a galactic conqueror and abandon them somewhere between \"this will change everything\" and \"why did I think this was a good idea again?\"",
+    "quickFacts": "Quick Facts",
+    "superpowerLabel": "Superpower:",
+    "superpower": "Turning \"just a quick weekend tool\" into month-long obsessions with custom auth systems.",
+    "weaknessLabel": "Weakness:",
+    "weakness": "Shiny new frameworks, coffee, and clickbait YouTube titles.",
+    "statusLabel": "Current status:",
+    "status": "Building this very website. Will it be finished? The prophecy remains unclear.",
+    "closing": "Here you'll find a glorious mess of chaotic experiments, meme-powered code, and questionable life decisions turned into software.",
+    "signature": "- Future Hokage aka Master Baiter (Elusive Joe)",
+    "tagline": "1-Day NNN Champion - Professional Overthinker - Sith Lord of Procrastination",
+    "course": "RS School React Course",
+    "mainMenu": "Main Menu"
+  }
+}

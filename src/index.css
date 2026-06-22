@@ -157,6 +157,19 @@
   background-color: rgb(250 204 21 / 0.1);
 }
 
+.language-select {
+  display: block;
+  padding: 0 1.75rem 0 0.75rem;
+  text-align: center;
+  text-align-last: center;
+}
+
+.language-select option {
+  background-color: #fff;
+  color: #18181b;
+  font-weight: 700;
+}
+
 .details-panel {
   position: relative;
   min-height: 420px;
@@ -557,7 +570,7 @@
   }
 }
 
-[data-theme='light'] body {
+[data-theme='light'] {
   background-color: #f4f4f5;
 }
 

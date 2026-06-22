@@ -1,5 +1,5 @@
-import { useOutletContext, useSearchParams } from 'react-router-dom';
 import { skipToken } from '@reduxjs/toolkit/query';
+import { useTranslations } from 'next-intl';
 import { useDispatch } from 'react-redux';
 import {
   charactersQueryApi,
@@ -7,16 +7,23 @@ import {
 } from '../../api/charactersQueryApi';
 import { Loader } from '../Loader';
 import type { AppDispatch } from '../../store';
+import type { Character } from '../../types/character';
 
-interface DetailsOutletContext {
+interface DetailsPanelProps {
+  detailsId: string | null;
+  initialDetailsId?: string | null;
+  initialCharacter?: Character | null;
   onClose: () => void;
 }
 
-export const DetailsPanel = () => {
+export const DetailsPanel = ({
+  detailsId,
+  initialDetailsId = null,
+  initialCharacter = null,
+  onClose,
+}: DetailsPanelProps) => {
+  const t = useTranslations('Details');
   const dispatch = useDispatch<AppDispatch>();
-  const [searchParams] = useSearchParams();
-  const { onClose } = useOutletContext<DetailsOutletContext>();
-  const detailsId = searchParams.get('details');
   const {
     data: character,
     error,
@@ -26,8 +33,10 @@ export const DetailsPanel = () => {
     error && 'error' in error && typeof error.error === 'string'
       ? error.error
       : error
-        ? 'Unable to load details. Please try again.'
+        ? t('fallbackError')
         : '';
+  const visibleCharacter =
+    character ?? (detailsId === initialDetailsId ? initialCharacter : null);
 
   const handleRefreshDetails = () => {
     if (detailsId) {
@@ -45,11 +54,11 @@ export const DetailsPanel = () => {
 
   return (
     <aside className="details-panel">
-      {isFetching && <Loader place="center" />}
+      {isFetching && !visibleCharacter && <Loader place="center" />}
 
       <div className="flex items-center gap-2">
         <p className="min-w-0 flex-1 text-sm font-semibold uppercase text-yellow-400">
-          Details
+          {t('title')}
         </p>
         <button
           type="button"
@@ -57,12 +66,12 @@ export const DetailsPanel = () => {
           disabled={isFetching}
           onClick={handleRefreshDetails}
         >
-          Refresh details
+          {t('refresh')}
         </button>
         <button
           type="button"
           className="details-close-button"
-          aria-label="Close details"
+          aria-label={t('close')}
           onClick={onClose}
         >
           x
@@ -70,29 +79,33 @@ export const DetailsPanel = () => {
       </div>
 
       <h2 className="mt-3 break-words text-[28px] font-bold leading-tight text-white">
-        {character?.name ?? 'Loading...'}
+        {visibleCharacter?.name ?? t('loading')}
       </h2>
 
       {errorMessage ? (
         <p className="mt-8 text-red-400">{errorMessage}</p>
       ) : (
-        character && (
+        visibleCharacter && (
           <dl className="mt-8 space-y-5 text-[17px]">
             <div>
-              <dt className="font-bold text-yellow-400">Birth year</dt>
-              <dd className="mt-1 text-zinc-100">{character.birth_year}</dd>
+              <dt className="font-bold text-yellow-400">{t('birthYear')}</dt>
+              <dd className="mt-1 text-zinc-100">
+                {visibleCharacter.birth_year}
+              </dd>
             </div>
             <div>
-              <dt className="font-bold text-yellow-400">Gender</dt>
-              <dd className="mt-1 text-zinc-100">{character.gender}</dd>
+              <dt className="font-bold text-yellow-400">{t('gender')}</dt>
+              <dd className="mt-1 text-zinc-100">{visibleCharacter.gender}</dd>
             </div>
             <div>
-              <dt className="font-bold text-yellow-400">Height</dt>
-              <dd className="mt-1 text-zinc-100">{character.height} cm</dd>
+              <dt className="font-bold text-yellow-400">{t('height')}</dt>
+              <dd className="mt-1 text-zinc-100">
+                {visibleCharacter.height} cm
+              </dd>
             </div>
             <div>
-              <dt className="font-bold text-yellow-400">Mass</dt>
-              <dd className="mt-1 text-zinc-100">{character.mass} kg</dd>
+              <dt className="font-bold text-yellow-400">{t('mass')}</dt>
+              <dd className="mt-1 text-zinc-100">{visibleCharacter.mass} kg</dd>
             </div>
           </dl>
         )

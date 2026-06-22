@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleSelectedItem } from '../../store/selectedItemsSlice';
 import type { AppDispatch, RootState } from '../../store';
@@ -9,6 +10,7 @@ interface CardProps {
 }
 
 export const Card = ({ item, onSelect }: CardProps) => {
+  const t = useTranslations('CardList');
   const dispatch = useDispatch<AppDispatch>();
   const selectedItems = useSelector(
     (state: RootState) => state.selectedItems.items
@@ -29,7 +31,7 @@ export const Card = ({ item, onSelect }: CardProps) => {
       <td className="w-12 py-2 pl-4 pr-1 align-top">
         <input
           type="checkbox"
-          aria-label={`Select ${item.name}`}
+          aria-label={t('selectItem', { name: item.name })}
           checked={isSelected}
           className="h-4 w-4 cursor-pointer accent-yellow-400"
           onChange={handleCheckboxChange}

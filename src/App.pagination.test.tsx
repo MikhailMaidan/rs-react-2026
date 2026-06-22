@@ -1,18 +1,45 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
-import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fetchCharacters } from './api/charactersApi';
 import App from './App';
 import { createAppStore } from './store';
 import { mockCharacterResults } from './test-utils/characters';
+import {
+  resetMockNavigation,
+  setMockUrl,
+  useMockSearch,
+} from './test-utils/nextNavigationMock';
+import { renderWithIntl } from './test-utils/renderWithIntl';
 
 vi.mock('./api/charactersApi', () => ({
   ITEMS_PER_PAGE: 10,
   fetchCharacters: vi.fn(),
   fetchCharacterDetails: vi.fn(),
 }));
+
+vi.mock('next/navigation', async () => {
+  const navigationMock = await import('./test-utils/nextNavigationMock');
+
+  return {
+    useSearchParams: navigationMock.useMockSearchParams,
+  };
+});
+
+vi.mock('./i18n/navigation', async () => {
+  const actual =
+    await vi.importActual<typeof import('./i18n/navigation')>(
+      './i18n/navigation'
+    );
+  const navigationMock = await import('./test-utils/nextNavigationMock');
+
+  return {
+    ...actual,
+    useRouter: () => navigationMock.routerMock,
+    usePathname: navigationMock.useMockPathname,
+  };
+});
 
 const firstPageResult = {
   items: [mockCharacterResults[0]],
@@ -33,6 +60,7 @@ describe('App pagination', () => {
 
   beforeEach(() => {
     localStorage.clear();
+    resetMockNavigation();
     fetchCharactersMock.mockReset();
     fetchCharactersMock
       .mockResolvedValueOnce(firstPageResult)
@@ -40,29 +68,19 @@ describe('App pagination', () => {
   });
 
   const LocationDisplay = () => {
-    const location = useLocation();
+    const search = useMockSearch();
 
-    return <span data-testid="location">{location.search}</span>;
+    return <span data-testid="location">{search}</span>;
   };
 
   const renderApp = (initialEntries = ['/']) => {
     const store = createAppStore();
+    setMockUrl(initialEntries[0]);
 
-    render(
+    renderWithIntl(
       <Provider store={store}>
-        <MemoryRouter initialEntries={initialEntries}>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <App />
-                  <LocationDisplay />
-                </>
-              }
-            />
-          </Routes>
-        </MemoryRouter>
+        <App />
+        <LocationDisplay />
       </Provider>
     );
 

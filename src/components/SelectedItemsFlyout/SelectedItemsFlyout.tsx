@@ -1,12 +1,12 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearSelectedItems } from '../../store/selectedItemsSlice';
 import type { AppDispatch, RootState } from '../../store';
 
-const makeCsvValue = (value: string) => {
-  return `"${value.replaceAll('"', '""')}"`;
-};
-
 export const SelectedItemsFlyout = () => {
+  const t = useTranslations('Selected');
   const dispatch = useDispatch<AppDispatch>();
   const selectedItems = useSelector(
     (state: RootState) => state.selectedItems.items
@@ -20,29 +20,11 @@ export const SelectedItemsFlyout = () => {
     dispatch(clearSelectedItems());
   };
 
-  const handleDownload = () => {
-    const csvRows = [
-      ['Name', 'Description', 'Details URL'].map(makeCsvValue).join(','),
-      ...selectedItems.map((item) =>
-        [item.name, item.description, item.url].map(makeCsvValue).join(',')
-      ),
-    ];
-    const csvText = csvRows.join('\n');
-    const blob = new Blob([csvText], { type: 'text/csv' });
-    const downloadUrl = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-
-    link.href = downloadUrl;
-    link.download = `${selectedItems.length}_items.csv`;
-    link.click();
-    URL.revokeObjectURL(downloadUrl);
-  };
-
   return (
     <div className="selected-flyout">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-lg font-bold text-white">
-          Selected: {selectedItems.length}
+          {t('selected', { count: selectedItems.length })}
         </p>
         <div className="flex flex-col gap-3 sm:flex-row">
           <button
@@ -50,15 +32,25 @@ export const SelectedItemsFlyout = () => {
             className="cursor-pointer rounded-md border border-yellow-400 px-5 py-3 font-semibold text-white transition hover:bg-yellow-400/10"
             onClick={handleUnselectAll}
           >
-            Unselect all
+            {t('unselectAll')}
           </button>
-          <button
-            type="button"
-            className="cursor-pointer rounded-md bg-yellow-400 px-5 py-3 font-bold text-black transition hover:bg-yellow-300"
-            onClick={handleDownload}
+          <form
+            action="/api/export-csv"
+            method="post"
+            aria-label={t('download')}
           >
-            Download
-          </button>
+            <input
+              type="hidden"
+              name="items"
+              value={JSON.stringify(selectedItems)}
+            />
+            <button
+              type="submit"
+              className="w-full cursor-pointer rounded-md bg-yellow-400 px-5 py-3 font-bold text-black transition hover:bg-yellow-300"
+            >
+              {t('download')}
+            </button>
+          </form>
         </div>
       </div>
     </div>

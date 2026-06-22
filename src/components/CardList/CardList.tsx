@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import { Card } from '../Card';
 import type { CharacterResult } from '../../types/character';
 
@@ -7,10 +8,12 @@ interface CardListProps {
 }
 
 export const CardList = ({ items, onItemSelect }: CardListProps) => {
+  const t = useTranslations('CardList');
+
   if (items.length === 0) {
     return (
       <div className="rounded-[8px] border border-yellow-400 bg-zinc-950/80 px-6 py-8 text-center text-base font-semibold text-zinc-300">
-        No results found
+        {t('empty')}
       </div>
     );
   }
@@ -25,14 +28,14 @@ export const CardList = ({ items, onItemSelect }: CardListProps) => {
             <col className="w-[60%]" />
           </colgroup>
           <caption className="border-b border-yellow-400/60 px-4 py-2 text-center text-[16px] font-bold text-white">
-            Results
+            {t('caption')}
           </caption>
           <thead>
             <tr className="border-b border-yellow-400/60 text-left text-zinc-100">
-              <th className="py-2 pl-4 pr-1 font-semibold">Select</th>
-              <th className="py-2 pl-5 pr-4 font-semibold">Item Name</th>
+              <th className="py-2 pl-4 pr-1 font-semibold">{t('select')}</th>
+              <th className="py-2 pl-5 pr-4 font-semibold">{t('itemName')}</th>
               <th className="py-2 pl-4 pr-6 font-semibold">
-                Item Description
+                {t('itemDescription')}
               </th>
             </tr>
           </thead>

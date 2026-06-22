@@ -7,7 +7,7 @@ describe('charactersQueryApi cache config', () => {
   });
 
   it('uses cache TTL from env', async () => {
-    vi.stubEnv('VITE_API_CACHE_TTL_SECONDS', '45');
+    vi.stubEnv('NEXT_PUBLIC_API_CACHE_TTL_SECONDS', '45');
     vi.resetModules();
 
     const { apiCacheTtlSeconds } = await import('./charactersQueryApi');
@@ -16,7 +16,7 @@ describe('charactersQueryApi cache config', () => {
   });
 
   it('uses default cache TTL when env value is not a number', async () => {
-    vi.stubEnv('VITE_API_CACHE_TTL_SECONDS', 'abc');
+    vi.stubEnv('NEXT_PUBLIC_API_CACHE_TTL_SECONDS', 'abc');
     vi.resetModules();
 
     const { apiCacheTtlSeconds } = await import('./charactersQueryApi');

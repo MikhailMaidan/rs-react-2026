@@ -1,4 +1,8 @@
+'use client';
+
 import { useState } from 'react';
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { getAssetUrl } from '../../utils/assets';
 
 interface ErrorButtonProps {
@@ -13,11 +17,12 @@ export const ErrorButton = ({
   onTriggerError,
   variant = 'default',
 }: ErrorButtonProps) => {
+  const t = useTranslations('ErrorButton');
   const [hasError, setHasError] = useState(false);
   const isErrorVariant = variant === 'error';
-  const buttonClasses = isErrorVariant
-    ? 'error-button-danger'
-    : 'error-button-default';
+  const buttonClasses = `${
+    isErrorVariant ? 'error-button-danger' : 'error-button-default'
+  } relative overflow-hidden`;
 
   const handleClick = () => {
     if (onTriggerError) {
@@ -33,19 +38,25 @@ export const ErrorButton = ({
   }
 
   return (
-    <button
-      type="button"
-      className={buttonClasses}
-      style={
-        isErrorVariant ? { backgroundImage: `url("${errorBackground}")` } : {}
-      }
-      onClick={handleClick}
-    >
-      <img
+    <button type="button" className={buttonClasses} onClick={handleClick}>
+      {isErrorVariant && (
+        <Image
+          src={errorBackground}
+          alt=""
+          fill
+          sizes="280px"
+          className="pointer-events-none object-cover"
+        />
+      )}
+      <Image
         src={attentionIcon}
+        alt=""
+        width={16}
+        height={16}
+        unoptimized
         className="icon-gold h-4 w-4 shrink-0"
       />
-      <span className="whitespace-nowrap">Error Button</span>
+      <span className="relative whitespace-nowrap">{t('label')}</span>
     </button>
   );
 };
